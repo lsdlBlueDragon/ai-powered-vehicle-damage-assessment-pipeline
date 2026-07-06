@@ -2,7 +2,7 @@
 
 CarDD car damage instance segmentation reproduction using Ultralytics YOLO11 on Colab.
 
-This repository keeps only lightweight, GitHub-friendly files. The CarDD dataset, checkpoints, training runs, and exported models should live in Google Drive or the local `G:` drive mirror.
+This repository keeps only lightweight, GitHub-friendly files. The CarDD dataset, checkpoints, training runs, and exported models should live in Google Drive, not in GitHub.
 
 ## Project Goal
 
@@ -18,17 +18,19 @@ Build a fast but complete reproduction project for CarDD:
 
 ```text
 .
-├── configs/
-│   └── cardd_yolo.yaml
-├── docs/
-│   ├── drive_layout.md
-│   └── reproduction_plan.md
-├── notebooks/
-│   ├── 01_train_cardd_yolo11_seg.ipynb
-│   └── 02_demo_cardd_yolo11_seg.ipynb
-├── requirements-colab.txt
-├── .gitignore
-└── README.md
+|-- configs/
+|   `-- cardd_yolo.yaml
+|-- docs/
+|   |-- drive_layout.md
+|   |-- privacy_checklist.md
+|   |-- reproduction_plan.md
+|   `-- results_summary.md
+|-- notebooks/
+|   |-- 01_train_cardd_yolo11_seg.ipynb
+|   `-- 02_demo_cardd_yolo11_seg.ipynb
+|-- requirements-colab.txt
+|-- .gitignore
+`-- README.md
 ```
 
 ## Drive Layout
@@ -54,16 +56,43 @@ Run in this order:
 1. `notebooks/01_train_cardd_yolo11_seg.ipynb`
    - Mounts Drive.
    - Installs dependencies.
-   - Checks or extracts CarDD data.
-   - Converts annotations to YOLO segmentation.
+   - Downloads the authorized CarDD zip to Drive if missing.
+   - Extracts and converts COCO annotations to YOLO segmentation.
    - Trains YOLO11 segmentation.
-   - Resumes automatically from `last.pt` if available.
+   - Loads `last.pt` and continues with safe training arguments if interrupted.
    - Evaluates and saves metrics.
 
 2. `notebooks/02_demo_cardd_yolo11_seg.ipynb`
    - Loads `best.pt` from Drive.
-   - Runs inference on demo images or validation samples.
+   - Runs inference on demo images or test samples.
    - Saves visualized predictions to Drive.
+
+## Results
+
+Default run:
+
+```text
+Model: YOLO11n-seg
+Epochs: 100
+GPU: Colab L4
+Train time: about 4.1 hours
+```
+
+Test set metrics:
+
+```text
+Box  precision: 0.697
+Box  recall:    0.592
+Box  mAP50:     0.644
+Box  mAP50-95:  0.488
+
+Mask precision: 0.703
+Mask recall:    0.592
+Mask mAP50:     0.638
+Mask mAP50-95:  0.473
+```
+
+See [docs/results_summary.md](docs/results_summary.md) for per-class results and artifact locations.
 
 ## Data Requirement
 
@@ -92,3 +121,21 @@ yolo11n-seg.pt
 ```
 
 This keeps the reproduction fast while still producing a complete detection and segmentation pipeline. You can switch to `yolo11s-seg.pt` or a larger model inside the training notebook.
+
+## Citation
+
+If you use CarDD, cite the dataset paper:
+
+```bibtex
+@article{wang2023cardd,
+  title={CarDD: A New Dataset for Vision-Based Car Damage Detection},
+  author={Wang, Xinkuang and Li, Wenjing and Wu, Zhongcheng},
+  journal={IEEE Transactions on Intelligent Transportation Systems},
+  volume={24},
+  number={7},
+  pages={7202--7214},
+  year={2023},
+  doi={10.1109/TITS.2023.3258480}
+}
+```
+

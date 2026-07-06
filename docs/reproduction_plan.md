@@ -44,3 +44,11 @@ This project reproduces a practical CarDD instance segmentation workflow:
 
 Use `yolo11n-seg.pt` by default. It is small enough for quick reproduction and still supports a complete instance segmentation pipeline. For stronger results, change the notebook variable to `yolo11s-seg.pt` or larger.
 
+## Current Status
+
+- Dataset preparation is complete.
+- YOLO11n-seg training is complete for 100 epochs.
+- Test evaluation is complete.
+- ONNX export is complete.
+- Demo inference is complete.
+- Final lightweight repository documentation is complete.
