@@ -67,13 +67,15 @@ Run in this order:
 
 ## Data Requirement
 
-CarDD requires following the dataset provider's license process. Put the authorized dataset zip or extracted COCO-style dataset under:
+CarDD requires following the dataset provider's license process. After access is approved, the training notebook can download the official `CarDD_release.zip` directly into Google Drive.
+
+The expected Drive location is:
 
 ```text
 CarDD_YOLO11/data_raw/
 ```
 
-or:
+You can also put an already extracted COCO-style dataset under:
 
 ```text
 CarDD_YOLO11/data_coco/

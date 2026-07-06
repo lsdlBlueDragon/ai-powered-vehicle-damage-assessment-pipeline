@@ -5,7 +5,7 @@ Use Google Drive for all files that should survive Colab disconnects.
 ```text
 CarDD_YOLO11/
 ├── data_raw/
-│   └── put-authorized-cardd-zip-or-files-here
+│   └── CarDD_release.zip
 ├── data_coco/
 │   └── extracted-or-prepared-coco-style-cardd
 ├── data_yolo/
@@ -36,6 +36,7 @@ Colab path:
 
 ## Backup Strategy
 
+- The training notebook downloads the official CarDD zip into `data_raw/` if it is missing.
 - Training uses `project=/content/drive/MyDrive/CarDD_YOLO11/runs/train`.
 - Checkpoints are saved directly to Drive.
 - If `runs/train/yolo11n_seg/weights/last.pt` exists, the training notebook resumes from it.
