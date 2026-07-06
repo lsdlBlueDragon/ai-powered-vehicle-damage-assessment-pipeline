@@ -39,10 +39,10 @@ Use this Google Drive path in Colab:
 /content/drive/MyDrive/CarDD_YOLO11/
 ```
 
-The local Windows mirror can be:
+An optional local Google Drive desktop mirror can be:
 
 ```text
-G:\我的云端硬盘\CarDD_YOLO11\
+<Google Drive desktop mirror>/CarDD_YOLO11/
 ```
 
 Large files belong there, not in GitHub.
@@ -90,4 +90,3 @@ yolo11n-seg.pt
 ```
 
 This keeps the reproduction fast while still producing a complete detection and segmentation pipeline. You can switch to `yolo11s-seg.pt` or a larger model inside the training notebook.
-

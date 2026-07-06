@@ -22,10 +22,10 @@ CarDD_YOLO11/
 └── backups/
 ```
 
-Windows Google Drive mirror:
+Optional local Google Drive desktop mirror:
 
 ```text
-G:\我的云端硬盘\CarDD_YOLO11\
+<Google Drive desktop mirror>/CarDD_YOLO11/
 ```
 
 Colab path:
@@ -40,4 +40,3 @@ Colab path:
 - Checkpoints are saved directly to Drive.
 - If `runs/train/yolo11n_seg/weights/last.pt` exists, the training notebook resumes from it.
 - Evaluation, prediction images, CSV files, plots, and exported models are also written to Drive.
-
