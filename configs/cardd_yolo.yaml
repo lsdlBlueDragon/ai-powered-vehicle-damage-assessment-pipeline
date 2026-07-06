@@ -1,0 +1,14 @@
+# Template only. The Colab training notebook writes the active YAML to Drive.
+path: /content/drive/MyDrive/CarDD_YOLO11/data_yolo
+train: images/train
+val: images/val
+test: images/test
+
+names:
+  0: dent
+  1: scratch
+  2: crack
+  3: glass shatter
+  4: lamp broken
+  5: tire flat
+
