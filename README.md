@@ -29,7 +29,8 @@ Build a fast but complete reproduction project for CarDD:
 |-- notebooks/
 |   |-- 01_train_cardd_yolo11_seg.ipynb
 |   |-- 02_demo_cardd_yolo11_seg.ipynb
-|   `-- 03_generate_llm_report_qwen7b.ipynb
+|   |-- 03_finetune_qwen7b_report_lora.ipynb
+|   `-- 04_generate_llm_report_qwen7b.ipynb
 |-- requirements-colab.txt
 |-- .gitignore
 `-- README.md
@@ -69,9 +70,14 @@ Run in this order:
    - Runs inference on demo images or test samples.
    - Saves visualized predictions to Drive.
 
-3. `notebooks/03_generate_llm_report_qwen7b.ipynb`
+3. `notebooks/03_finetune_qwen7b_report_lora.ipynb`
+   - Uses a small open `GEM/totto` data-to-text slice plus CarDD-specific report examples.
+   - Fine-tunes Qwen2.5-7B-Instruct with QLoRA.
+   - Saves only the LoRA adapter under `CarDD_YOLO11/llm_adapters/`.
+
+4. `notebooks/04_generate_llm_report_qwen7b.ipynb`
    - Loads experiment metrics and demo summaries from Drive.
-   - Uses Qwen2.5-7B-Instruct to generate a final Markdown report.
+   - Uses the fine-tuned Qwen2.5-7B-Instruct LoRA adapter when available.
    - Saves the generated report under `CarDD_YOLO11/reports/`.
 
 ## Results
