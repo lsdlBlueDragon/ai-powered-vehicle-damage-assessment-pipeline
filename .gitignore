@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
 .test_tmp/
+.pytest_tmp/
+.tmp_pytest/
+pytest-cache-files-*/
+tests/_tmp_*/
 build/
 dist/
 *.egg-info/

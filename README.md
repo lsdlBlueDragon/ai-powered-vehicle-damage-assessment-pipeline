@@ -10,7 +10,7 @@ The project uses CarDD as the vision dataset and YOLO11 segmentation as the dete
 Vehicle image
   -> YOLO11n-seg damage detection and instance segmentation
   -> structured prediction JSON
-  -> grounded Chinese/English project report
+  -> Qwen LoRA-backed Chinese/English project and image-level reports
   -> RAG/LLM evaluation for metric consistency, retrieval, and forbidden claims
   -> FastAPI + Gradio inference demo
 ```
@@ -83,9 +83,12 @@ The notebooks are now runbooks. They install this package and call the CLI:
 !python -m vehicle_damage_pipeline.vision.train_yolo --drive-root /content/drive/MyDrive/CarDD_YOLO11 --model yolo11n-seg.pt
 !python -m vehicle_damage_pipeline.vision.predict --weights /content/drive/MyDrive/CarDD_YOLO11/runs/train/yolo11n_seg/weights/best.pt --source /content/drive/MyDrive/CarDD_YOLO11/demo_images --output /content/drive/MyDrive/CarDD_YOLO11/runs/predict/demo
 !python -m vehicle_damage_pipeline.report.build_context --drive-root /content/drive/MyDrive/CarDD_YOLO11
-!python -m vehicle_damage_pipeline.report.generate --context /content/drive/MyDrive/CarDD_YOLO11/reports/qwen7b_report_context.json --language Chinese
+!python -m vehicle_damage_pipeline.llm.finetune_report_lora --drive-root /content/drive/MyDrive/CarDD_YOLO11 --skip-if-complete --train-examples 1200 --eval-examples 120 --epochs 1 --max-seq-length 1024
+!python -m vehicle_damage_pipeline.report.generate --context /content/drive/MyDrive/CarDD_YOLO11/reports/qwen7b_report_context.json --language Chinese --backend qwen --adapter-dir /content/drive/MyDrive/CarDD_YOLO11/llm_adapters/qwen2_5_7b_cardd_report_lora
 !python -m vehicle_damage_pipeline.eval.run_llm_eval --context /content/drive/MyDrive/CarDD_YOLO11/reports/qwen7b_report_context.json --report /content/drive/MyDrive/CarDD_YOLO11/reports/qwen7b_final_report.md --knowledge-root /content/drive/MyDrive/CarDD_YOLO11 --output-json /content/drive/MyDrive/CarDD_YOLO11/reports/llm_eval_summary.json --output-markdown /content/drive/MyDrive/CarDD_YOLO11/reports/llm_eval_summary.md
 ```
+
+`report.generate` and the Gradio/API report layer use the Qwen LoRA adapter by default. Add `--no-qwen` for deterministic template reports on low-memory or offline runs. The LoRA training CLI is reconnect-safe: when a complete adapter is already present in Drive, it writes metadata and skips training unless `--force-retrain` is provided.
 
 ## Inference Service
 
@@ -93,6 +96,7 @@ FastAPI:
 
 ```bash
 set VEHICLE_DAMAGE_WEIGHTS=<Google Drive desktop mirror>\CarDD_YOLO11\runs\train\yolo11n_seg\weights\best.pt
+set VEHICLE_DAMAGE_QWEN_ADAPTER_DIR=<Google Drive desktop mirror>\CarDD_YOLO11\llm_adapters\qwen2_5_7b_cardd_report_lora
 uvicorn vehicle_damage_pipeline.service.api:app --host 0.0.0.0 --port 8000
 ```
 
@@ -107,7 +111,7 @@ POST /report
 Gradio:
 
 ```bash
-python -m vehicle_damage_pipeline.service.gradio_app --weights "<Google Drive desktop mirror>\CarDD_YOLO11\runs\train\yolo11n_seg\weights\best.pt"
+python -m vehicle_damage_pipeline.service.gradio_app --weights "<Google Drive desktop mirror>\CarDD_YOLO11\runs\train\yolo11n_seg\weights\best.pt" --adapter-dir "<Google Drive desktop mirror>\CarDD_YOLO11\llm_adapters\qwen2_5_7b_cardd_report_lora"
 ```
 
 ## RAG/LLM Evaluation

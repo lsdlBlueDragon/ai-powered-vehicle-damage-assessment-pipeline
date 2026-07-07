@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import tempfile
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
+from vehicle_damage_pipeline.llm.adapter import adapter_status
+from vehicle_damage_pipeline.llm.qwen_reporter import DEFAULT_QWEN_MODEL_ID, build_assessment_report_messages, generate_qwen_text
 from vehicle_damage_pipeline.vision.predict import predict_images
 
 
@@ -80,16 +82,12 @@ def _confidence_band(confidence: float) -> str:
     return "较低置信度"
 
 
-def generate_assessment_report(prediction: dict[str, Any]) -> str:
+def generate_template_assessment_report(prediction: dict[str, Any]) -> str:
     detections = prediction.get("detections", [])
     if not detections:
-        return (
-            "未检测到高于阈值的车辆损伤。建议结合人工复核、更多角度图片和更高分辨率局部图像继续判断。"
-        )
+        return "未检测到高于阈值的车辆损伤。建议结合人工复核、更多角度图片和更高分辨率局部图像继续判断。"
 
-    lines = [
-        f"检测到 {len(detections)} 处疑似车辆损伤。以下结论由视觉模型自动生成，适合作为初步筛查参考："
-    ]
+    lines = [f"检测到 {len(detections)} 处疑似车辆损伤。以下结论由视觉模型自动生成，适合作为初步筛查参考："]
     for index, item in enumerate(detections, start=1):
         class_name = str(item.get("class_name", "unknown"))
         confidence = float(item.get("confidence", 0.0))
@@ -114,3 +112,53 @@ def generate_assessment_report(prediction: dict[str, Any]) -> str:
     lines.append("")
     lines.append("该输出仅用于辅助评估，不构成生产级保险定损结论。")
     return "\n".join(lines)
+
+
+def _normalize_report_backend(backend: str) -> str:
+    normalized = backend.lower().strip()
+    if normalized in {"template", "deterministic", "no-qwen"}:
+        return "template"
+    if normalized in {"qwen", "qwen_adapter", "qwen-adapter"}:
+        return "qwen"
+    raise ValueError(f"Unsupported assessment report backend: {backend}")
+
+
+def generate_assessment_report(
+    prediction: dict[str, Any],
+    *,
+    backend: str = "qwen",
+    adapter_dir: str | Path | None = None,
+    model_id: str = DEFAULT_QWEN_MODEL_ID,
+    language: str = "Chinese",
+    max_new_tokens: int = 512,
+    temperature: float = 0.2,
+    load_in_4bit: bool = True,
+    fallback_to_template: bool = True,
+    qwen_generate_fn: Callable[..., str] | None = None,
+) -> str:
+    selected_backend = _normalize_report_backend(backend)
+    if selected_backend == "template":
+        return generate_template_assessment_report(prediction)
+
+    status = adapter_status(adapter_dir) if adapter_dir else {"complete": False, "missing_files": ["adapter_dir"]}
+    if not status["complete"]:
+        if fallback_to_template:
+            return generate_template_assessment_report(prediction)
+        raise FileNotFoundError(f"Qwen assessment adapter is incomplete: {status}")
+
+    messages = build_assessment_report_messages(prediction, language=language)
+    generator = qwen_generate_fn or generate_qwen_text
+    try:
+        text = generator(
+            messages=messages,
+            model_id=model_id,
+            adapter_dir=adapter_dir,
+            max_new_tokens=max_new_tokens,
+            temperature=temperature,
+            load_in_4bit=load_in_4bit,
+        ).strip()
+    except Exception:
+        if fallback_to_template:
+            return generate_template_assessment_report(prediction)
+        raise
+    return text or generate_template_assessment_report(prediction)

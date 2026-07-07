@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from vehicle_damage_pipeline.llm.adapter import adapter_status, report_adapter_dir
 from vehicle_damage_pipeline.paths import ensure_project_dirs
 
 
@@ -165,14 +166,31 @@ def finetune_report_lora(
     eval_examples: int = 120,
     epochs: int = 1,
     max_seq_length: int = 1024,
+    force_retrain: bool = False,
 ) -> Path:
+    paths = ensure_project_dirs(drive_root)
+    adapter_dir = report_adapter_dir(drive_root)
+    status = adapter_status(adapter_dir)
+    if status["complete"] and not force_retrain:
+        metadata = {
+            "model_id": model_id,
+            "adapter_dir": str(adapter_dir),
+            "status": "skipped_existing_adapter",
+            "reason": "Complete Qwen report LoRA adapter already exists in Drive.",
+            "adapter_status": status,
+            "packing": False,
+        }
+        (paths["reports"] / "qwen7b_report_sft_metadata.json").write_text(
+            json.dumps(metadata, indent=2),
+            encoding="utf-8",
+        )
+        return adapter_dir
+
     import torch
     from peft import LoraConfig, prepare_model_for_kbit_training
     from transformers import AutoModelForCausalLM, BitsAndBytesConfig
     from trl import SFTConfig, SFTTrainer
 
-    paths = ensure_project_dirs(drive_root)
-    adapter_dir = paths["llm_adapters"] / "qwen2_5_7b_cardd_report_lora"
     train_dataset, eval_dataset, tokenizer, metadata = build_sft_dataset(
         drive_root=drive_root,
         model_id=model_id,
@@ -245,6 +263,8 @@ def main() -> None:
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--max-seq-length", type=int, default=1024)
     parser.add_argument("--build-dataset-only", action="store_true")
+    parser.add_argument("--skip-if-complete", action="store_true", default=True)
+    parser.add_argument("--force-retrain", action="store_true")
     args = parser.parse_args()
     if args.build_dataset_only:
         _, _, _, metadata = build_sft_dataset(
@@ -262,6 +282,7 @@ def main() -> None:
         eval_examples=args.eval_examples,
         epochs=args.epochs,
         max_seq_length=args.max_seq_length,
+        force_retrain=args.force_retrain,
     )
     print("Adapter saved:", adapter_dir)
 

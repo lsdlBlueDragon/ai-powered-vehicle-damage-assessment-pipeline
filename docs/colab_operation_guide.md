@@ -164,6 +164,7 @@ Purpose:
 - Use `GEM/totto` as the open data-to-text training source.
 - Add a few CarDD-specific report-format examples from the actual project metrics.
 - Save only the LoRA adapter to Drive.
+- Reuse the existing Drive adapter after Colab reconnect. The default command skips training when the adapter is complete; use `--force-retrain` only when intentionally rebuilding it.
 
 Expected outputs:
 
@@ -178,6 +179,7 @@ Notes:
 - The base Qwen model is downloaded through Hugging Face cache in Colab.
 - The base model is not committed to GitHub.
 - The LoRA adapter should stay in Drive because it is a generated model artifact.
+- Adapter completeness is checked by `adapter_config.json`, `adapter_model.safetensors`, `tokenizer_config.json`, and `tokenizer.json`.
 
 ## 5. Notebook 04: Generate Final Qwen7B Report
 
@@ -193,13 +195,13 @@ Runtime:
 GPU recommended
 ```
 
-Run after notebook 03 if you want the fine-tuned adapter. If the adapter is missing, the notebook falls back to the base Qwen2.5-7B-Instruct model.
+Run after notebook 03. The default report backend uses the fine-tuned Qwen LoRA adapter saved in Drive. For low-memory or offline demonstration, add `--no-qwen` to use the deterministic template backend.
 
 Behavior:
 
 - Reads metrics, run summary, training CSV, and demo output from Drive.
 - Builds a report context JSON.
-- Loads the LoRA adapter if available.
+- Loads the LoRA adapter by default and records report backend metadata.
 - Generates a final Markdown report.
 
 Expected outputs:
@@ -207,6 +209,7 @@ Expected outputs:
 ```text
 CarDD_YOLO11/reports/qwen7b_report_context.json
 CarDD_YOLO11/reports/qwen7b_final_report.md
+CarDD_YOLO11/reports/qwen7b_final_report.metadata.json
 ```
 
 ## 6. Final GitHub Deliverables
@@ -258,4 +261,3 @@ For report generation after existing visual results:
 03_finetune_qwen7b_report_lora.ipynb
 04_generate_llm_report_qwen7b.ipynb
 ```
-

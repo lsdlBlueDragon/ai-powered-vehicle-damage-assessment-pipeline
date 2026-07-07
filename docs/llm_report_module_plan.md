@@ -98,7 +98,7 @@ The generated report should include:
 ## Execution Notes
 
 - Run after notebooks 01 and 02.
-- Run notebook 03 on a GPU Colab runtime to create the LoRA adapter.
-- Run notebook 04 after notebook 03; it falls back to the base model if the adapter does not exist.
+- Run notebook 03 on a GPU Colab runtime to create the LoRA adapter. After reconnect, the default CLI checks the Drive adapter and skips training when it is complete.
+- Run notebook 04 after notebook 03. The default backend uses the Qwen LoRA adapter; add `--no-qwen` for the deterministic template fallback.
 - If 4-bit model loading fails, restart runtime and rerun the notebook.
 - Model cache remains in the Colab/Hugging Face cache; generated reports are saved to Drive.
