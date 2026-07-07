@@ -1,6 +1,6 @@
 # CarDD YOLO11 Segmentation Reproduction
 
-CarDD car damage instance segmentation reproduction using Ultralytics YOLO11 on Colab.
+CarDD car damage instance segmentation reproduction using Ultralytics YOLO11 on Colab, with an optional Qwen7B report-generation module.
 
 This repository keeps only lightweight, GitHub-friendly files. The CarDD dataset, checkpoints, training runs, and exported models should live in Google Drive, not in GitHub.
 
@@ -13,6 +13,37 @@ Build a fast but complete reproduction project for CarDD:
 - Save all Colab training outputs to Google Drive.
 - Resume training automatically from Drive after Colab disconnects.
 - Run an end-to-end demo with predicted classes, boxes, confidence scores, and masks.
+- Fine-tune Qwen2.5-7B-Instruct with QLoRA for report-style generation.
+- Generate a final Markdown report from the project metrics and demo outputs.
+
+## Quick Start
+
+Run the notebooks in order:
+
+```text
+01_train_cardd_yolo11_seg.ipynb
+02_demo_cardd_yolo11_seg.ipynb
+03_finetune_qwen7b_report_lora.ipynb
+04_generate_llm_report_qwen7b.ipynb
+```
+
+See [docs/colab_operation_guide.md](docs/colab_operation_guide.md) for the full Colab runbook.
+
+## Deliverables
+
+GitHub contains:
+
+- Colab notebooks.
+- Dataset/model configuration templates.
+- Reproduction and operation documentation.
+- Final result summaries.
+
+Google Drive contains:
+
+- CarDD dataset archive and converted YOLO data.
+- YOLO11 checkpoints and exported ONNX model.
+- Evaluation plots and demo predictions.
+- Qwen7B LoRA adapter and generated report.
 
 ## Repository Layout
 
@@ -21,6 +52,7 @@ Build a fast but complete reproduction project for CarDD:
 |-- configs/
 |   `-- cardd_yolo.yaml
 |-- docs/
+|   |-- colab_operation_guide.md
 |   |-- drive_layout.md
 |   |-- llm_report_module_plan.md
 |   |-- privacy_checklist.md
@@ -106,6 +138,13 @@ Mask mAP50-95:  0.473
 ```
 
 See [docs/results_summary.md](docs/results_summary.md) for per-class results and artifact locations.
+
+## Current Status
+
+- YOLO11n-seg training, evaluation, ONNX export, and demo inference are complete.
+- Final test metrics and demo summaries are documented.
+- Qwen7B QLoRA fine-tuning and report-generation notebooks are prepared.
+- Large generated artifacts are kept in Google Drive.
 
 ## Data Requirement
 

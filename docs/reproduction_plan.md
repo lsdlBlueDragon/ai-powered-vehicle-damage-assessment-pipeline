@@ -17,6 +17,8 @@ This project reproduces a practical CarDD instance segmentation workflow:
 - Automatic Drive checkpointing and resume.
 - Validation metrics and visual outputs.
 - Demo inference notebook.
+- Qwen7B report-direction QLoRA fine-tuning.
+- LLM-generated final Markdown report.
 
 ## Tasks
 
@@ -40,6 +42,14 @@ This project reproduces a practical CarDD instance segmentation workflow:
    - Verify: selected images produce class labels, boxes, confidence scores, and masks.
    - Verify: visualized predictions are saved under Drive.
 
+6. Fine-tune Qwen7B report adapter.
+   - Verify: LoRA adapter is saved under `CarDD_YOLO11/llm_adapters/`.
+   - Verify: SFT metadata is saved under `CarDD_YOLO11/reports/`.
+
+7. Generate final report.
+   - Verify: `qwen7b_report_context.json` is saved.
+   - Verify: `qwen7b_final_report.md` is saved.
+
 ## Default Training Choice
 
 Use `yolo11n-seg.pt` by default. It is small enough for quick reproduction and still supports a complete instance segmentation pipeline. For stronger results, change the notebook variable to `yolo11s-seg.pt` or larger.
@@ -52,3 +62,5 @@ Use `yolo11n-seg.pt` by default. It is small enough for quick reproduction and s
 - ONNX export is complete.
 - Demo inference is complete.
 - Final lightweight repository documentation is complete.
+- Colab operation guide is complete.
+- Qwen7B report fine-tuning and generation workflow is prepared.
