@@ -22,12 +22,14 @@ Build a fast but complete reproduction project for CarDD:
 |   `-- cardd_yolo.yaml
 |-- docs/
 |   |-- drive_layout.md
+|   |-- llm_report_module_plan.md
 |   |-- privacy_checklist.md
 |   |-- reproduction_plan.md
 |   `-- results_summary.md
 |-- notebooks/
 |   |-- 01_train_cardd_yolo11_seg.ipynb
-|   `-- 02_demo_cardd_yolo11_seg.ipynb
+|   |-- 02_demo_cardd_yolo11_seg.ipynb
+|   `-- 03_generate_llm_report_qwen7b.ipynb
 |-- requirements-colab.txt
 |-- .gitignore
 `-- README.md
@@ -66,6 +68,11 @@ Run in this order:
    - Loads `best.pt` from Drive.
    - Runs inference on demo images or test samples.
    - Saves visualized predictions to Drive.
+
+3. `notebooks/03_generate_llm_report_qwen7b.ipynb`
+   - Loads experiment metrics and demo summaries from Drive.
+   - Uses Qwen2.5-7B-Instruct to generate a final Markdown report.
+   - Saves the generated report under `CarDD_YOLO11/reports/`.
 
 ## Results
 
@@ -138,4 +145,3 @@ If you use CarDD, cite the dataset paper:
   doi={10.1109/TITS.2023.3258480}
 }
 ```
-
