@@ -2,6 +2,10 @@
 __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
+.test_tmp/
+build/
+dist/
+*.egg-info/
 
 # Local environments
 .venv/
@@ -9,14 +13,14 @@ venv/
 env/
 
 # Large data and training outputs
-data/
-data_raw/
-data_coco/
-data_yolo/
-runs/
-weights/
-exports/
-backups/
+/data/
+/data_raw/
+/data_coco/
+/data_yolo/
+/runs/
+/weights/
+/exports/
+/backups/
 *.pt
 *.pth
 *.onnx
@@ -26,9 +30,11 @@ backups/
 *.tar.gz
 *.7z
 
+# Local evidence backups should stay outside Git.
+AI_Powered_Vehicle_Damage_Assessment_Backup_*/
+
 # OS/editor
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
-

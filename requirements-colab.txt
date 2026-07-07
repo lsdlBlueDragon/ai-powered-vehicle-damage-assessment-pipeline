@@ -11,3 +11,8 @@ accelerate
 bitsandbytes
 peft
 trl
+fastapi
+uvicorn
+gradio
+python-multipart
+pytest

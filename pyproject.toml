@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vehicle-damage-pipeline"
+version = "0.1.0"
+description = "AI-powered vehicle damage detection, segmentation, report generation, and evaluation pipeline."
+requires-python = ">=3.10"
+dependencies = [
+  "pandas",
+  "pyyaml",
+  "tqdm",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

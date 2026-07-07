@@ -1,129 +1,37 @@
-# CarDD YOLO11 Segmentation Reproduction
+# AI-Powered Vehicle Damage Assessment Pipeline
 
-CarDD car damage instance segmentation reproduction using Ultralytics YOLO11 on Colab, with an optional Qwen7B report-generation module.
+End-to-end AI engineering project for vehicle damage detection, instance segmentation, structured inference output, grounded report generation, and RAG/LLM evaluation.
 
-This repository keeps only lightweight, GitHub-friendly files. The CarDD dataset, checkpoints, training runs, and exported models should live in Google Drive, not in GitHub.
+The project uses CarDD as the vision dataset and YOLO11 segmentation as the detector. Large datasets, checkpoints, adapters, and generated artifacts live in Google Drive; GitHub contains the lightweight engineering code, Colab runbooks, configs, tests, and documentation.
 
-## Project Goal
-
-Build a fast but complete reproduction project for CarDD:
-
-- Convert CarDD COCO-style instance segmentation annotations to YOLO segmentation format.
-- Fine-tune a small YOLO11 segmentation model for car damage detection and mask segmentation.
-- Save all Colab training outputs to Google Drive.
-- Resume training automatically from Drive after Colab disconnects.
-- Run an end-to-end demo with predicted classes, boxes, confidence scores, and masks.
-- Fine-tune Qwen2.5-7B-Instruct with QLoRA for report-style generation.
-- Generate a final Markdown report from the project metrics and demo outputs.
-
-## Quick Start
-
-Run the notebooks in order:
+## What This Builds
 
 ```text
-01_train_cardd_yolo11_seg.ipynb
-02_demo_cardd_yolo11_seg.ipynb
-03_finetune_qwen7b_report_lora.ipynb
-04_generate_llm_report_qwen7b.ipynb
+Vehicle image
+  -> YOLO11n-seg damage detection and instance segmentation
+  -> structured prediction JSON
+  -> grounded Chinese/English project report
+  -> RAG/LLM evaluation for metric consistency, retrieval, and forbidden claims
+  -> FastAPI + Gradio inference demo
 ```
 
-See [docs/colab_operation_guide.md](docs/colab_operation_guide.md) for the full Colab runbook.
+This is not a SOTA claim and not a production insurance assessment system. It is a portfolio-oriented AI engineering pipeline focused on reproducibility, service boundaries, evaluation, and honest limitations.
 
-## Deliverables
+## Current Results
 
-GitHub contains:
-
-- Colab notebooks.
-- Dataset/model configuration templates.
-- Reproduction and operation documentation.
-- Final result summaries.
-
-Google Drive contains:
-
-- CarDD dataset archive and converted YOLO data.
-- YOLO11 checkpoints and exported ONNX model.
-- Evaluation plots and demo predictions.
-- Qwen7B LoRA adapter and generated report.
-
-## Repository Layout
-
-```text
-.
-|-- configs/
-|   `-- cardd_yolo.yaml
-|-- docs/
-|   |-- colab_operation_guide.md
-|   |-- drive_layout.md
-|   |-- llm_report_module_plan.md
-|   |-- privacy_checklist.md
-|   |-- reproduction_plan.md
-|   `-- results_summary.md
-|-- notebooks/
-|   |-- 01_train_cardd_yolo11_seg.ipynb
-|   |-- 02_demo_cardd_yolo11_seg.ipynb
-|   |-- 03_finetune_qwen7b_report_lora.ipynb
-|   `-- 04_generate_llm_report_qwen7b.ipynb
-|-- requirements-colab.txt
-|-- .gitignore
-`-- README.md
-```
-
-## Drive Layout
-
-Use this Google Drive path in Colab:
-
-```text
-/content/drive/MyDrive/CarDD_YOLO11/
-```
-
-An optional local Google Drive desktop mirror can be:
-
-```text
-<Google Drive desktop mirror>/CarDD_YOLO11/
-```
-
-Large files belong there, not in GitHub.
-
-## Notebooks
-
-Run in this order:
-
-1. `notebooks/01_train_cardd_yolo11_seg.ipynb`
-   - Mounts Drive.
-   - Installs dependencies.
-   - Downloads the authorized CarDD zip to Drive if missing.
-   - Extracts and converts COCO annotations to YOLO segmentation.
-   - Trains YOLO11 segmentation.
-   - Loads `last.pt` and continues with safe training arguments if interrupted.
-   - Evaluates and saves metrics.
-
-2. `notebooks/02_demo_cardd_yolo11_seg.ipynb`
-   - Loads `best.pt` from Drive.
-   - Runs inference on demo images or test samples.
-   - Saves visualized predictions to Drive.
-
-3. `notebooks/03_finetune_qwen7b_report_lora.ipynb`
-   - Uses a small open `GEM/totto` data-to-text slice plus CarDD-specific report examples.
-   - Fine-tunes Qwen2.5-7B-Instruct with QLoRA.
-   - Saves only the LoRA adapter under `CarDD_YOLO11/llm_adapters/`.
-
-4. `notebooks/04_generate_llm_report_qwen7b.ipynb`
-   - Loads experiment metrics and demo summaries from Drive.
-   - Uses the fine-tuned Qwen2.5-7B-Instruct LoRA adapter when available.
-   - Saves the generated report under `CarDD_YOLO11/reports/`.
-
-## Results
-
-Default run:
+Default completed experiment:
 
 ```text
 Model: YOLO11n-seg
+Dataset: CarDD
 Epochs: 100
+Image size: 1024
+Batch size: 7
 GPU: Colab L4
-Train time: about 4.1 hours
+Training time: about 4.1 hours
 ```
 
-Test set metrics:
+Test metrics:
 
 ```text
 Box  precision: 0.697
@@ -137,46 +45,107 @@ Mask mAP50:     0.638
 Mask mAP50-95:  0.473
 ```
 
-See [docs/results_summary.md](docs/results_summary.md) for per-class results and artifact locations.
+The strongest classes are `glass shatter`, `tire flat`, and `lamp broken`. The harder classes are `crack`, `scratch`, and `dent`.
 
-## Current Status
-
-- YOLO11n-seg training, evaluation, ONNX export, and demo inference are complete.
-- Final test metrics and demo summaries are documented.
-- Qwen7B QLoRA fine-tuning and report-generation notebooks are prepared.
-- Large generated artifacts are kept in Google Drive.
-
-## Data Requirement
-
-CarDD requires following the dataset provider's license process. After access is approved, the training notebook can download the official `CarDD_release.zip` directly into Google Drive.
-
-The expected Drive location is:
+## Repository Layout
 
 ```text
-CarDD_YOLO11/data_raw/
+configs/                         Dataset config templates
+docs/                            Model/data cards, runbooks, evaluation notes
+notebooks/                       Thin Colab runbooks using !python -m commands
+src/vehicle_damage_pipeline/     Engineering package
+tests/                           Lightweight behavior tests
+requirements-colab.txt           Colab dependency list
+pyproject.toml                   Local package metadata
 ```
 
-You can also put an already extracted COCO-style dataset under:
+## Colab Workflow
+
+Use Google Drive root:
 
 ```text
-CarDD_YOLO11/data_coco/
+/content/drive/MyDrive/CarDD_YOLO11
 ```
 
-The training notebook will search these locations.
-
-## Default Model
-
-The default model is:
+Run the notebooks in order:
 
 ```text
-yolo11n-seg.pt
+01_train_cardd_yolo11_seg.ipynb
+02_demo_cardd_yolo11_seg.ipynb
+03_finetune_qwen7b_report_lora.ipynb
+04_generate_llm_report_qwen7b.ipynb
 ```
 
-This keeps the reproduction fast while still producing a complete detection and segmentation pipeline. You can switch to `yolo11s-seg.pt` or a larger model inside the training notebook.
+The notebooks are now runbooks. They install this package and call the CLI:
+
+```bash
+!python -m vehicle_damage_pipeline.data.prepare_cardd --drive-root /content/drive/MyDrive/CarDD_YOLO11
+!python -m vehicle_damage_pipeline.vision.train_yolo --drive-root /content/drive/MyDrive/CarDD_YOLO11 --model yolo11n-seg.pt
+!python -m vehicle_damage_pipeline.vision.predict --weights /content/drive/MyDrive/CarDD_YOLO11/runs/train/yolo11n_seg/weights/best.pt --source /content/drive/MyDrive/CarDD_YOLO11/demo_images --output /content/drive/MyDrive/CarDD_YOLO11/runs/predict/demo
+!python -m vehicle_damage_pipeline.report.build_context --drive-root /content/drive/MyDrive/CarDD_YOLO11
+!python -m vehicle_damage_pipeline.report.generate --context /content/drive/MyDrive/CarDD_YOLO11/reports/qwen7b_report_context.json --language Chinese
+!python -m vehicle_damage_pipeline.eval.run_llm_eval --context /content/drive/MyDrive/CarDD_YOLO11/reports/qwen7b_report_context.json --report /content/drive/MyDrive/CarDD_YOLO11/reports/qwen7b_final_report.md --knowledge-root /content/drive/MyDrive/CarDD_YOLO11 --output-json /content/drive/MyDrive/CarDD_YOLO11/reports/llm_eval_summary.json --output-markdown /content/drive/MyDrive/CarDD_YOLO11/reports/llm_eval_summary.md
+```
+
+## Inference Service
+
+FastAPI:
+
+```bash
+set VEHICLE_DAMAGE_WEIGHTS=<Google Drive desktop mirror>\CarDD_YOLO11\runs\train\yolo11n_seg\weights\best.pt
+uvicorn vehicle_damage_pipeline.service.api:app --host 0.0.0.0 --port 8000
+```
+
+Endpoints:
+
+```text
+GET  /health
+POST /predict
+POST /report
+```
+
+Gradio:
+
+```bash
+python -m vehicle_damage_pipeline.service.gradio_app --weights "<Google Drive desktop mirror>\CarDD_YOLO11\runs\train\yolo11n_seg\weights\best.pt"
+```
+
+## RAG/LLM Evaluation
+
+The evaluation module checks:
+
+- retrieval coverage over README, docs, report JSON, run summaries, and demo labels;
+- grounded metric mentions against `qwen7b_report_context.json`;
+- required report sections;
+- forbidden claims such as SOTA or production-ready insurance assessment statements.
+
+Outputs:
+
+```text
+reports/llm_eval_summary.json
+reports/llm_eval_summary.md
+```
+
+## GitHub Safety
+
+Do not commit:
+
+```text
+CarDD_release.zip
+data_raw/
+data_coco/
+data_yolo/
+runs/
+*.pt
+*.onnx
+llm_adapters/
+private Drive links
+tokens or credentials
+```
+
+Keep those artifacts in Google Drive.
 
 ## Citation
-
-If you use CarDD, cite the dataset paper:
 
 ```bibtex
 @article{wang2023cardd,

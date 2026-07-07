@@ -1,31 +1,29 @@
 # Drive Layout
 
-Use Google Drive for all files that should survive Colab disconnects.
+Use Google Drive for all files that must survive Colab disconnects.
 
 ```text
 CarDD_YOLO11/
-├── data_raw/
-│   └── CarDD_release.zip
-├── data_coco/
-│   └── extracted-or-prepared-coco-style-cardd
-├── data_yolo/
-│   ├── images/
-│   ├── labels/
-│   ├── cardd.yaml
-│   └── data_ready.json
-├── runs/
-│   ├── train/
-│   ├── val/
-│   └── predict/
-├── exports/
-├── reports/
-└── backups/
-```
-
-Optional local Google Drive desktop mirror:
-
-```text
-<Google Drive desktop mirror>/CarDD_YOLO11/
+|-- data_raw/
+|   `-- CarDD_release.zip
+|-- data_coco/
+|   `-- extracted-or-prepared-coco-style-cardd
+|-- data_yolo/
+|   |-- images/
+|   |-- labels/
+|   |-- cardd.yaml
+|   `-- data_ready.json
+|-- runs/
+|   |-- train/
+|   |-- val/
+|   `-- predict/
+|-- exports/
+|-- reports/
+|-- llm_adapters/
+|-- external_data/
+|-- notebooks/
+|-- docs/
+`-- backups/
 ```
 
 Colab path:
@@ -34,10 +32,11 @@ Colab path:
 /content/drive/MyDrive/CarDD_YOLO11/
 ```
 
+The GitHub repository should contain code, configs, notebooks, and docs only. Dataset files, model weights, adapters, ONNX exports, and generated runs remain in Drive.
+
 ## Backup Strategy
 
-- The training notebook downloads the official CarDD zip into `data_raw/` if it is missing.
-- Training uses `project=/content/drive/MyDrive/CarDD_YOLO11/runs/train`.
-- Checkpoints are saved directly to Drive.
-- If `runs/train/yolo11n_seg/weights/last.pt` exists, the training notebook resumes from it.
-- Evaluation, prediction images, CSV files, plots, and exported models are also written to Drive.
+- YOLO checkpoints are saved directly under `runs/train/`.
+- The latest evaluation metrics and generated reports are saved under `reports/`.
+- Lightweight evidence backups should copy notebooks, reports, demo outputs, ONNX, docs, and configs only.
+- Backups should not include `data_raw`, `data_coco`, `data_yolo`, `*.pt`, or LoRA checkpoint directories.
