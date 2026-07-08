@@ -49,7 +49,14 @@ def tfidf_search(query: str, docs: list[dict[str, str]], top_k: int = 5) -> list
             idf = math.log((doc_count + 1) / (df[term] + 1)) + 1
             score += terms[term] * idf
         if score > 0:
-            scored.append({"id": doc["id"], "score": round(score, 4), "text": doc["text"][:800]})
+            scored.append(
+                {
+                    "id": doc["id"],
+                    "score": round(score, 4),
+                    "text": doc["text"][:800],
+                    "_full_text": doc["text"],
+                }
+            )
     return sorted(scored, key=lambda item: item["score"], reverse=True)[:top_k]
 
 
@@ -66,7 +73,7 @@ def evaluate_retrieval(docs: list[dict[str, str]]) -> dict[str, object]:
     hits = 0
     for name, query in checks.items():
         retrieved = tfidf_search(query, docs, top_k=5)
-        found = any(query.lower() in item["text"].lower() for item in retrieved)
+        found = any(query.lower() in str(item.get("_full_text", item["text"])).lower() for item in retrieved)
         results[name] = {"query": query, "hit": found, "retrieved": [item["id"] for item in retrieved]}
         hits += int(found)
     return {"recall_at_5": hits / len(checks), "checks": results}
