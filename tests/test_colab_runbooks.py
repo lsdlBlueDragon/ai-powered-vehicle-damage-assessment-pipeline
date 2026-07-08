@@ -77,3 +77,5 @@ def test_08_url_public_demo_notebook_exists_and_checks_url_demo_flow():
     assert "debug-json-panel" in text
     assert "colab_gradio_public_demo.py" in text
     assert "share=True" in text
+    assert "sys.path.insert(0, str(src_root))" in text
+    assert "importlib.invalidate_caches()" in text
