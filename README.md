@@ -76,11 +76,14 @@ Run the notebooks in order:
 04_generate_llm_report_qwen7b.ipynb
 06_colab_qwen_report_eval_full_workflow.ipynb
 07_colab_final_portfolio_validation.ipynb
+08_colab_public_url_demo_test.ipynb
 ```
 
 Use `06_colab_qwen_report_eval_full_workflow.ipynb` as the current Task 1+2 report/eval runbook. It syncs the latest lightweight GitHub code into Drive, reuses the existing Qwen LoRA adapter with `--skip-if-complete`, checks the latest public metrics, generates the validated report, runs the LLM/RAG eval, and backs up the evidence bundle.
 
 Use `07_colab_final_portfolio_validation.ipynb` after the portfolio polish changes. It verifies package tests, project report eval, single-image report safety, compact demo display helpers, and final lightweight evidence backup against existing Drive artifacts.
+
+Use `08_colab_public_url_demo_test.ipynb` to rehearse the public Gradio demo flow. It supports uploaded images or direct online image URLs, and keeps the full prediction JSON in a collapsed, print-hidden debug panel so damaged-image masks do not make printed/PDF demo pages too long.
 
 The notebooks are now runbooks. They install this package and call the CLI:
 

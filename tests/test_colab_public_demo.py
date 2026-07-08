@@ -2,8 +2,10 @@ import shutil
 from pathlib import Path
 
 from vehicle_damage_pipeline.service.colab_public_demo import (
+    build_demo_css,
     build_colab_launch_kwargs,
     collect_example_images,
+    resolve_image_input,
 )
 
 
@@ -29,3 +31,52 @@ def test_collect_example_images_finds_supported_files_in_stable_order():
 
     assert examples == [str(tmp_path / "a.jpg"), str(tmp_path / "c.png")]
     shutil.rmtree(tmp_path)
+
+
+def test_resolve_image_input_uses_upload_when_url_is_empty():
+    image = resolve_image_input(
+        uploaded_image_path="local.jpg",
+        image_url=" ",
+        url_download_dir=Path(".test_tmp") / "url_inputs",
+    )
+
+    assert image == "local.jpg"
+
+
+def test_resolve_image_input_prefers_url_and_uses_downloader():
+    calls = []
+
+    def fake_downloader(url: str, output_dir: Path) -> str:
+        calls.append((url, output_dir))
+        return str(output_dir / "downloaded.jpg")
+
+    image = resolve_image_input(
+        uploaded_image_path="local.jpg",
+        image_url="https://example.test/damage.jpg",
+        url_download_dir=Path(".test_tmp") / "url_inputs",
+        downloader=fake_downloader,
+    )
+
+    assert image.endswith("downloaded.jpg")
+    assert calls == [("https://example.test/damage.jpg", Path(".test_tmp") / "url_inputs")]
+
+
+def test_resolve_image_input_requires_upload_or_url():
+    try:
+        resolve_image_input(
+            uploaded_image_path=None,
+            image_url="",
+            url_download_dir=Path(".test_tmp") / "url_inputs",
+        )
+    except ValueError as exc:
+        assert "Upload an image or provide an image URL" in str(exc)
+    else:
+        raise AssertionError("Expected missing input to raise ValueError.")
+
+
+def test_demo_css_hides_debug_json_when_printing():
+    css = build_demo_css()
+
+    assert ".debug-json-panel" in css
+    assert "@media print" in css
+    assert "display: none" in css

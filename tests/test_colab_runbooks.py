@@ -59,3 +59,21 @@ def test_key_python_files_do_not_contain_mojibake_markers():
         assert question_triplet not in text
         for marker in bad_markers:
             assert marker not in text, f"{path} still contains mojibake marker {marker!r}"
+
+
+def test_08_url_public_demo_notebook_exists_and_checks_url_demo_flow():
+    path = Path("notebooks/08_colab_public_url_demo_test.ipynb")
+    notebook = json.loads(path.read_text(encoding="utf-8"))
+    text = _notebook_text(path)
+    question_triplet = "?" * 3
+
+    assert len(notebook["cells"]) >= 8
+    assert question_triplet not in text
+    assert "URL 图片公开 Demo 测试" in text
+    assert "TEST_IMAGE_URL" in text
+    assert "download_image_url" in text
+    assert "resolve_image_input" in text
+    assert "build_demo_css" in text
+    assert "debug-json-panel" in text
+    assert "colab_gradio_public_demo.py" in text
+    assert "share=True" in text

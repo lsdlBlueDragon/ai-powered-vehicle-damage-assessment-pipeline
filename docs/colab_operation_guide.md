@@ -276,7 +276,40 @@ CarDD_YOLO11/reports/final_portfolio_demo_display_smoke.json
 CarDD_YOLO11/backups/final_portfolio_validation_<timestamp>/
 ```
 
-## 8. Final GitHub Deliverables
+## 8. Notebook 08: Public URL Demo Test
+
+Notebook:
+
+```text
+notebooks/08_colab_public_url_demo_test.ipynb
+```
+
+Runtime:
+
+```text
+GPU recommended
+```
+
+Use this notebook to rehearse the public Gradio demo with uploaded images or direct online image URLs. For URL testing, paste a direct `.jpg`, `.png`, or `.webp` image URL into `TEST_IMAGE_URL`; normal web page URLs may fail because they return HTML instead of image bytes.
+
+Behavior:
+
+- Syncs the latest lightweight GitHub code into Drive.
+- Verifies URL download helpers and compact demo display helpers.
+- Optionally downloads one direct online image URL and runs prediction against `best.pt`.
+- Launches the Colab public demo with `share=True`.
+- Keeps full `mask_polygon` data only in the collapsed debug JSON panel and hides that panel during browser print/PDF output.
+
+Expected optional outputs:
+
+```text
+CarDD_YOLO11/demo_url_inputs/
+CarDD_YOLO11/runs/predict/url_demo_smoke/
+CarDD_YOLO11/reports/url_demo_smoke_output.json
+CarDD_YOLO11/runs/gradio_url_demo/
+```
+
+## 9. Final GitHub Deliverables
 
 GitHub should contain:
 
@@ -301,7 +334,7 @@ private Drive links
 personal tokens or credentials
 ```
 
-## 9. Recommended Execution Order
+## 10. Recommended Execution Order
 
 For the complete project:
 
@@ -312,6 +345,7 @@ For the complete project:
 04_generate_llm_report_qwen7b.ipynb
 06_colab_qwen_report_eval_full_workflow.ipynb
 07_colab_final_portfolio_validation.ipynb
+08_colab_public_url_demo_test.ipynb
 ```
 
 For a quick visual-only reproduction:
