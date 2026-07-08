@@ -30,10 +30,10 @@ def _context() -> dict:
         "project": {"name": "AI-Powered Vehicle Damage Assessment Pipeline"},
         "dataset": {"name": "CarDD"},
         "test_metrics": {
-            "metrics/mAP50(B)": 0.644,
-            "metrics/mAP50-95(B)": 0.311,
-            "metrics/mAP50(M)": 0.638,
-            "metrics/mAP50-95(M)": 0.287,
+            "metrics/mAP50(B)": 0.6745857662514867,
+            "metrics/mAP50-95(B)": 0.5111031193401403,
+            "metrics/mAP50(M)": 0.6711594915715345,
+            "metrics/mAP50-95(M)": 0.49173212749837997,
         },
     }
 
@@ -82,7 +82,7 @@ def test_project_report_defaults_to_qwen_adapter_and_can_use_template():
         "## 项目概览\n"
         "项目使用 CarDD 数据集构建车辆损伤检测与实例分割流程。\n\n"
         "## 结果\n"
-        "测试集 box mAP50 0.644，mask mAP50 0.638。\n\n"
+        "测试集 box mAP50 0.675，mask mAP50 0.671。\n\n"
         "## 局限性\n"
         "该项目不是生产级保险定损系统，也不声明 SOTA。"
     )
@@ -99,7 +99,7 @@ def test_project_report_defaults_to_qwen_adapter_and_can_use_template():
     template_result = generate_report_from_context(_context(), backend="template")
     assert template_result.metadata["backend"] == "template"
     assert "box mAP50" in template_result.text
-    assert "0.644" in template_result.text
+    assert "0.675" in template_result.text
 
 
 def test_project_report_falls_back_when_qwen_output_fails_eval():

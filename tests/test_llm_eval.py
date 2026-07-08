@@ -4,15 +4,15 @@ from vehicle_damage_pipeline.eval.llm_eval import evaluate_report
 def test_evaluate_report_checks_grounded_metrics_and_required_sections():
     context = {
         "test_metrics": {
-            "metrics/mAP50(B)": 0.6439247593491015,
-            "metrics/mAP50(M)": 0.6380694210039354,
+            "metrics/mAP50(B)": 0.6745857662514867,
+            "metrics/mAP50(M)": 0.6711594915715345,
         }
     }
     report = """
 # 车辆损伤检测报告
 
 ## 项目概览
-本项目在测试集上取得 box mAP50 0.644 和 mask mAP50 0.638。
+本项目在测试集上取得 box mAP50 0.675 和 mask mAP50 0.671。
 
 ## 结果
 测试指标来自结构化 context。
@@ -34,8 +34,8 @@ def test_evaluate_report_checks_grounded_metrics_and_required_sections():
 def test_evaluate_report_flags_missing_metrics_and_forbidden_claims():
     context = {
         "test_metrics": {
-            "metrics/mAP50(B)": 0.6439247593491015,
-            "metrics/mAP50(M)": 0.6380694210039354,
+            "metrics/mAP50(B)": 0.6745857662514867,
+            "metrics/mAP50(M)": 0.6711594915715345,
         }
     }
     report = "This production-ready insurance assessment system reaches SOTA performance."

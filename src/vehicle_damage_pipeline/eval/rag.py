@@ -57,8 +57,8 @@ def evaluate_retrieval(docs: list[dict[str, str]]) -> dict[str, object]:
     checks = {
         "model": "YOLO11n-seg",
         "dataset": "CarDD",
-        "box_map50": "0.644",
-        "mask_map50": "0.638",
+        "box_map50": "0.6746",
+        "mask_map50": "0.6712",
         "demo": "scratch",
         "artifacts": "best.pt",
     }

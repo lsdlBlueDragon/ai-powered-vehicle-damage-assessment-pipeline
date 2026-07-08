@@ -212,7 +212,43 @@ CarDD_YOLO11/reports/qwen7b_final_report.md
 CarDD_YOLO11/reports/qwen7b_final_report.metadata.json
 ```
 
-## 6. Final GitHub Deliverables
+## 6. Notebook 06: Task 1+2 Qwen Report/Eval Full Workflow
+
+Notebook:
+
+```text
+notebooks/06_colab_qwen_report_eval_full_workflow.ipynb
+```
+
+Runtime:
+
+```text
+GPU recommended
+```
+
+Use this as the current combined runbook for the report validation and evaluation polish work. It replaces the old experimental 05 flow for new Task 1+2 runs.
+
+Behavior:
+
+- Syncs the latest lightweight GitHub code into the Drive project folder without touching datasets, weights, adapters, or generated runs.
+- Checks the Drive YOLO weights, Qwen adapter files, and latest public test metrics.
+- Reuses the existing Qwen adapter with `--skip-if-complete`; use `--force-retrain` only when intentionally rebuilding it.
+- Builds the report context, generates the Qwen-backed report, and verifies the validation/fallback metadata.
+- Runs the LLM/RAG evaluation and asserts the latest retrieval checks for box mAP50 `0.6746` and mask mAP50 `0.6712`.
+- Copies the Task 1+2 evidence files into a timestamped Drive backup folder.
+
+Expected outputs:
+
+```text
+CarDD_YOLO11/reports/qwen7b_report_context.json
+CarDD_YOLO11/reports/qwen7b_final_report.md
+CarDD_YOLO11/reports/qwen7b_final_report.metadata.json
+CarDD_YOLO11/reports/llm_eval_summary.json
+CarDD_YOLO11/reports/llm_eval_summary.md
+CarDD_YOLO11/backups/qwen_report_eval_task12_<timestamp>/
+```
+
+## 7. Final GitHub Deliverables
 
 GitHub should contain:
 

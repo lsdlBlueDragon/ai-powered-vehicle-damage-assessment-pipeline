@@ -1,11 +1,14 @@
 # CarDD YOLO11 Segmentation 项目中文报告与操作指南
 
-更新时间：2026-07-07
+更新时间：2026-07-08
 
-本报告面向简历、面试和项目收尾展示，基于当前仓库文件、现有文档和 4 个 Colab notebook 的实际结构整理。当前你已经完整运行了：
+本报告面向简历、面试和项目收尾展示，基于当前仓库文件、现有文档和 Colab runbook 的实际结构整理。当前主流程包括：
 
 - `notebooks/01_train_cardd_yolo11_seg.ipynb`
 - `notebooks/02_demo_cardd_yolo11_seg.ipynb`
+- `notebooks/03_finetune_qwen7b_report_lora.ipynb`
+- `notebooks/04_generate_llm_report_qwen7b.ipynb`
+- `notebooks/06_colab_qwen_report_eval_full_workflow.ipynb`
 
 需要注意：仓库内的 notebook 是干净模板版，`execution_count` 和输出区均为空。真实训练结果、模型权重、指标 JSON、ONNX、demo 可视化图应以 Google Drive 下 `CarDD_YOLO11/` 的产物为准。
 
@@ -27,7 +30,7 @@ CarDD 车辆损伤检测与实例分割复现项目
 
 - 这是一个完整的计算机视觉工程复现项目，不只是跑通模型。
 - 核心亮点是从数据转换、训练、评估、可视化、部署导出到实验报告生成的端到端闭环。
-- 结果可量化：YOLO11n-seg 训练 100 epochs，测试集 box mAP50 为 0.644，mask mAP50 为 0.638。
+- 结果可量化：YOLO11n-seg 训练 100 epochs，测试集 box mAP50 为 0.6746，mask mAP50 为 0.6712。
 - 工程可靠性可讲：Google Drive 持久化产物、`last.pt` 断点续训、数据转换幂等标记、GitHub 只保留轻量代码和文档。
 
 ## 2. 当前项目状态
@@ -246,30 +249,20 @@ Train time: about 4.1 hours
 
 验证集结果：
 
-```text
-Box  precision: 0.659
-Box  recall:    0.609
-Box  mAP50:     0.631
-Box  mAP50-95:  0.482
-
-Mask precision: 0.661
-Mask recall:    0.605
-Mask mAP50:     0.626
-Mask mAP50-95:  0.473
-```
+验证集详细指标保留在 Drive 的训练日志和 `results.csv` 中；当前面向简历和公开展示的主结果统一采用下面的最新测试集指标。
 
 测试集结果：
 
 ```text
-Box  precision: 0.697
-Box  recall:    0.592
-Box  mAP50:     0.644
-Box  mAP50-95:  0.488
+Box  precision: 0.6717
+Box  recall:    0.6374
+Box  mAP50:     0.6746
+Box  mAP50-95:  0.5111
 
-Mask precision: 0.703
-Mask recall:    0.592
-Mask mAP50:     0.638
-Mask mAP50-95:  0.473
+Mask precision: 0.6795
+Mask recall:    0.6242
+Mask mAP50:     0.6712
+Mask mAP50-95:  0.4917
 ```
 
 各类别 test mAP50：
@@ -364,12 +357,12 @@ Python, Ultralytics YOLO11, PyTorch, OpenCV, COCO, YOLO Segmentation, Google Col
 - 基于 CarDD 数据集完成车辆损伤检测与实例分割复现，构建从 COCO 标注解析、YOLO segmentation 数据转换、模型训练、评估、ONNX 导出到 demo 可视化的端到端流程。
 - 使用 Ultralytics YOLO11n-seg 在 Colab L4 上训练 100 epochs，设置 Drive 持久化训练目录与 `last.pt` 断点续训机制，解决 Colab 中断和训练产物丢失问题。
 - 针对分割训练中 singleton batch 风险，将 batch size 调整为 7，并结合 AdamW、AMP、multi-scale、mosaic、mixup、copy-paste 等策略完成稳定训练。
-- 在测试集上取得 box mAP50 0.644、mask mAP50 0.638，完成按类别分析，发现 `glass shatter`、`tire flat`、`lamp broken` 表现较优，`crack`、`scratch`、`dent` 为主要优化方向。
+- 在测试集上取得 box mAP50 0.6746、mask mAP50 0.6712，完成按类别分析，发现 `glass shatter`、`tire flat`、`lamp broken` 表现较优，`crack`、`scratch`、`dent` 为主要优化方向。
 - 设计 Qwen2.5-7B-Instruct QLoRA 报告生成模块，将实验指标、训练日志和 demo 输出整理为结构化 context，生成可复用的 Markdown 实验报告。
 
 如果简历篇幅很短，可以压缩成 2 条：
 
-- 复现 CarDD 车辆损伤实例分割任务，基于 YOLO11n-seg 完成 COCO 到 YOLO segmentation 转换、Colab Drive 断点续训、测试评估、ONNX 导出和 demo 推理，测试集达到 box mAP50 0.644、mask mAP50 0.638。
+- 复现 CarDD 车辆损伤实例分割任务，基于 YOLO11n-seg 完成 COCO 到 YOLO segmentation 转换、Colab Drive 断点续训、测试评估、ONNX 导出和 demo 推理，测试集达到 box mAP50 0.6746、mask mAP50 0.6712。
 - 构建实验报告自动化模块，使用 Qwen2.5-7B-Instruct + QLoRA 将结构化指标、训练日志和 demo 结果生成 Markdown 报告，并通过 prompt 约束降低指标编造风险。
 
 不建议写法：
@@ -382,7 +375,7 @@ Python, Ultralytics YOLO11, PyTorch, OpenCV, COCO, YOLO Segmentation, Google Col
 
 ### 10.1 60 秒项目介绍
 
-这个项目是一个 CarDD 车辆损伤检测与实例分割的工程复现。我没有只停留在训练模型，而是把完整流程做成了 Colab 可复现 pipeline：首先解析 CarDD 的 COCO 风格标注，把 polygon 转成 YOLO segmentation 格式；然后用 YOLO11n-seg 在 Colab L4 上训练 100 个 epoch，并把数据、checkpoint、评估结果和 demo 输出都持久化到 Google Drive，支持中断后从 `last.pt` 继续。最终测试集 box mAP50 是 0.644，mask mAP50 是 0.638，并完成了 ONNX 导出和 demo 可视化。后续我还设计了 Qwen2.5-7B 的 QLoRA 报告模块，用结构化实验指标自动生成 Markdown 报告。
+这个项目是一个 CarDD 车辆损伤检测与实例分割的工程复现。我没有只停留在训练模型，而是把完整流程做成了 Colab 可复现 pipeline：首先解析 CarDD 的 COCO 风格标注，把 polygon 转成 YOLO segmentation 格式；然后用 YOLO11n-seg 在 Colab L4 上训练 100 个 epoch，并把数据、checkpoint、评估结果和 demo 输出都持久化到 Google Drive，支持中断后从 `last.pt` 继续。最终测试集 box mAP50 是 0.6746，mask mAP50 是 0.6712，并完成了 ONNX 导出和 demo 可视化。后续我还设计了 Qwen2.5-7B 的 QLoRA 报告模块，用结构化实验指标自动生成 Markdown 报告。
 
 ### 10.2 为什么选 YOLO11n-seg，而不是更大的模型
 
@@ -397,7 +390,7 @@ Python, Ultralytics YOLO11, PyTorch, OpenCV, COCO, YOLO Segmentation, Google Col
 可以回答：
 
 ```text
-mAP50 是 IoU 阈值为 0.5 时的平均精度，主要反映模型能否大致定位目标。mAP50-95 是从 0.5 到 0.95 多个 IoU 阈值的平均，更严格，更能体现边界和定位质量。当前测试集 box mAP50 是 0.644，但 box mAP50-95 是 0.488，说明模型已经具备可用定位能力，但精细定位和 mask 边界仍有提升空间。
+mAP50 是 IoU 阈值为 0.5 时的平均精度，主要反映模型能否大致定位目标。mAP50-95 是从 0.5 到 0.95 多个 IoU 阈值的平均，更严格，更能体现边界和定位质量。当前测试集 box mAP50 是 0.6746，box mAP50-95 是 0.5111；mask mAP50 是 0.6712，mask mAP50-95 是 0.4917，说明模型已经具备可用定位能力，但精细定位和 mask 边界仍有提升空间。
 ```
 
 ### 10.4 为什么 crack 类效果差
@@ -619,4 +612,3 @@ REPORT_LANGUAGE = 'Chinese'
 - 能解释为什么某些类别难。
 - 能讲清楚 Colab Drive 断点续训。
 - 能讲清楚 QLoRA 报告模块的边界和价值。
-

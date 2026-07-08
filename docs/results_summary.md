@@ -15,34 +15,22 @@ The training notebook uses Drive-backed checkpoints and avoids singleton final b
 
 ## Validation Result
 
-Final validation on `best.pt`:
-
-```text
-Box  precision: 0.659
-Box  recall:    0.609
-Box  mAP50:     0.631
-Box  mAP50-95:  0.482
-
-Mask precision: 0.661
-Mask recall:    0.605
-Mask mAP50:     0.626
-Mask mAP50-95:  0.473
-```
+Validation metrics are kept in the Drive training logs for traceability. The public summary below uses the latest test split metrics as the canonical portfolio result.
 
 ## Test Result
 
 Final test metrics:
 
 ```text
-Box  precision: 0.697
-Box  recall:    0.592
-Box  mAP50:     0.644
-Box  mAP50-95:  0.488
+Box  precision: 0.6717
+Box  recall:    0.6374
+Box  mAP50:     0.6746
+Box  mAP50-95:  0.5111
 
-Mask precision: 0.703
-Mask recall:    0.592
-Mask mAP50:     0.638
-Mask mAP50-95:  0.473
+Mask precision: 0.6795
+Mask recall:    0.6242
+Mask mAP50:     0.6712
+Mask mAP50-95:  0.4917
 ```
 
 Per-class test mAP50:

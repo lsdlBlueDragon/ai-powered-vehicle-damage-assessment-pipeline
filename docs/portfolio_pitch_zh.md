@@ -13,7 +13,7 @@ AI-Powered Vehicle Damage Assessment Pipeline
 
 ## 简历 Bullet
 
-- 构建车辆损伤检测与自动化报告生成系统，基于 YOLO11n-seg 完成 CarDD 数据集实例分割训练、ONNX 导出与推理服务封装，测试集达到 box mAP50 0.644、mask mAP50 0.638。
+- 构建车辆损伤检测与自动化报告生成系统，基于 YOLO11n-seg 完成 CarDD 数据集实例分割训练、ONNX 导出与推理服务封装，测试集达到 box mAP50 0.6746、mask mAP50 0.6712。
 - 将 Colab notebook 改造为工程化 CLI runbook，支持数据转换、训练、推理、报告上下文构建和 LLM 评估的 `python -m` 调用。
 - 设计 FastAPI 与 Gradio 推理入口，输出损伤类别、置信度、bbox、mask polygon、推理耗时和结构化报告文本。
 - 建立轻量 RAG/LLM 评估体系，检查报告指标一致性、检索覆盖、章节完整性和夸大声明，降低 LLM 报告幻觉风险。

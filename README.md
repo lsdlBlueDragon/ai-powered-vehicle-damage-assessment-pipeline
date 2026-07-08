@@ -34,15 +34,15 @@ Training time: about 4.1 hours
 Test metrics:
 
 ```text
-Box  precision: 0.697
-Box  recall:    0.592
-Box  mAP50:     0.644
-Box  mAP50-95:  0.488
+Box  precision: 0.6717
+Box  recall:    0.6374
+Box  mAP50:     0.6746
+Box  mAP50-95:  0.5111
 
-Mask precision: 0.703
-Mask recall:    0.592
-Mask mAP50:     0.638
-Mask mAP50-95:  0.473
+Mask precision: 0.6795
+Mask recall:    0.6242
+Mask mAP50:     0.6712
+Mask mAP50-95:  0.4917
 ```
 
 The strongest classes are `glass shatter`, `tire flat`, and `lamp broken`. The harder classes are `crack`, `scratch`, and `dent`.
@@ -74,7 +74,10 @@ Run the notebooks in order:
 02_demo_cardd_yolo11_seg.ipynb
 03_finetune_qwen7b_report_lora.ipynb
 04_generate_llm_report_qwen7b.ipynb
+06_colab_qwen_report_eval_full_workflow.ipynb
 ```
+
+Use `06_colab_qwen_report_eval_full_workflow.ipynb` as the current Task 1+2 report/eval runbook. It syncs the latest lightweight GitHub code into Drive, reuses the existing Qwen LoRA adapter with `--skip-if-complete`, checks the latest public metrics, generates the validated report, runs the LLM/RAG eval, and backs up the evidence bundle.
 
 The notebooks are now runbooks. They install this package and call the CLI:
 

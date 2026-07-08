@@ -16,10 +16,14 @@ This model is intended for portfolio demonstration, research reproduction, and A
 Test split:
 
 ```text
-Box mAP50:     0.644
-Box mAP50-95:  0.488
-Mask mAP50:    0.638
-Mask mAP50-95: 0.473
+Box precision:  0.6717
+Box recall:     0.6374
+Box mAP50:      0.6746
+Box mAP50-95:   0.5111
+Mask precision: 0.6795
+Mask recall:    0.6242
+Mask mAP50:     0.6712
+Mask mAP50-95:  0.4917
 ```
 
 ## Strengths
