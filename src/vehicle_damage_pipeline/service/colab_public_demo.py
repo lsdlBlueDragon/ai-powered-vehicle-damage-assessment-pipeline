@@ -176,7 +176,7 @@ def launch_colab_demo(
             gr.Examples(examples=examples, inputs=image, label="Prepared upload samples")
         run_button.click(run, inputs=[image, image_url], outputs=[output_summary, detection_table, report, debug_json])
 
-    print("Launching Gradio with share=True. Use the public gradio.live URL shown below.")
+    print("Launching Gradio with share=True. Use the public gradio.live URL shown below.", flush=True)
     demo.launch(**build_colab_launch_kwargs(server_port=server_port))
 
 

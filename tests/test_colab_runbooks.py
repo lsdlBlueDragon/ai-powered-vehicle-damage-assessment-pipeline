@@ -79,3 +79,6 @@ def test_08_url_public_demo_notebook_exists_and_checks_url_demo_flow():
     assert "share=True" in text
     assert "sys.path.insert(0, str(src_root))" in text
     assert "importlib.invalidate_caches()" in text
+    assert "PYTHONUNBUFFERED" in text
+    assert "subprocess.Popen" in text
+    assert "STARTUP_TIMEOUT_SECONDS" in text
