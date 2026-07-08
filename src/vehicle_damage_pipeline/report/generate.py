@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
 
+from vehicle_damage_pipeline.eval.llm_eval import evaluate_report
 from vehicle_damage_pipeline.llm.adapter import adapter_status, is_report_adapter_complete, report_adapter_dir
 from vehicle_damage_pipeline.llm.qwen_reporter import DEFAULT_QWEN_MODEL_ID, build_project_report_messages, generate_qwen_text
 
@@ -128,6 +129,24 @@ def generate_report_from_context(
         temperature=temperature,
         load_in_4bit=load_in_4bit,
     )
+    validation = evaluate_report(context, text)
+    if not validation["passed"]:
+        if not fallback_to_template:
+            raise ValueError(f"Qwen report failed validation: {validation}")
+        return GeneratedReport(
+            text=generate_template_report(context, language=language),
+            metadata={
+                "backend": "template",
+                "requested_backend": "qwen",
+                "fallback_reason": "qwen_report_validation_failed",
+                "qwen_backend": "qwen_adapter",
+                "adapter_dir": str(resolved_adapter),
+                "adapter_complete": is_report_adapter_complete(resolved_adapter),
+                "model_id": model_id,
+                "language": language,
+                "qwen_validation": validation,
+            },
+        )
     return GeneratedReport(
         text=text,
         metadata={
@@ -137,6 +156,7 @@ def generate_report_from_context(
             "adapter_complete": is_report_adapter_complete(resolved_adapter),
             "model_id": model_id,
             "language": language,
+            "qwen_validation": validation,
         },
     )
 
