@@ -606,3 +606,50 @@ portfolio
 2. 用 `000033.jpg` 和 no-damage 示例各导出一个干净 demo。
 
 完成这两步后，项目就更像一个可讲、可展示、可防守的 AI Engineer 作品集，而不是 notebook 堆叠。
+
+## 14. 2026-07-08 最终收口状态更新
+
+本节为最新状态，优先级高于上方历史计划。
+
+已经完成：
+
+1. Task 1 报告链路已具备可用工程闭环：
+   - Qwen LoRA adapter 文件在 Drive 中完整存在。
+   - Colab public demo 页面显示报告层默认使用 Qwen LoRA adapter。
+   - 用户补充说明：notebook 中的 `^C` 是为了终止外部链接测试/展示阶段，并不代表 Qwen 加载和报告生成失败。
+   - 06 notebook 对旧 metadata、Qwen validation fallback、template fallback 均做兼容。
+2. Task 2 eval 已跑通：
+   - `reports/llm_eval_summary.json` 最终 `passed: true`。
+   - report eval：指标 grounding、必要章节、forbidden claims 检查均通过。
+   - retrieval eval：`recall_at_5: 1.0`。
+   - 最新公开指标检查为 box mAP50 `0.6746`、mask mAP50 `0.6712`。
+3. 公开指标已统一：
+   - README、model card、experiment card、results summary、中文面试报告和 eval 检查均使用最新 test metrics。
+4. 当前 canonical Colab runbook：
+   - 不再继续使用 05 作为新流程入口。
+   - 使用 `notebooks/06_colab_qwen_report_eval_full_workflow.ipynb` 跑 Task 1+2 报告/eval 全流程。
+   - 06 已包含 PYTHONPATH 修复、retrieval evidence、eval-safe fallback、metadata 兼容和最终备份 cell。
+5. 最新 Colab 证据备份：
+   - Drive 备份目录：`CarDD_YOLO11/backups/qwen_report_eval_task12_20260708_085511`
+   - Drive 备份压缩包：`CarDD_YOLO11/backups/qwen_report_eval_task12_20260708_085511.zip`
+   - manifest 中 `missing: []`。
+6. demo PDF 证据：
+   - `demo1.pdf`：public Gradio no-damage 示例，包含外部 gradio.live 链接和报告摘要。
+   - `demo2.pdf`：public Gradio dent 示例，包含检测 JSON、mask polygon 和自然语言摘要。
+   - 注意：demo2 仍较长并暴露完整 polygon，适合作为调试/证据材料；若要作为简历展示材料，建议截图或另导出 1-3 页精简版。
+
+按最初目标重新评估：
+
+该项目已经达到“完整可用、面向简历和面试的工程项目”标准。推荐展示口径是：
+
+```text
+基于 CarDD 的车辆损伤实例分割工程项目，使用 YOLO11n-seg 完成训练、测试评估、Colab/Drive 断点恢复、demo 推理、Qwen LoRA 报告层、LLM/RAG eval 和证据备份，形成可复现、可验证、可讲解的 AI Engineer 作品集闭环。
+```
+
+边界表述：
+
+- 可以说项目包含 Qwen LoRA 报告层和 eval/fallback 机制。
+- 可以说 public Colab demo 已生成报告摘要和外部链接。
+- 不要把项目描述成生产级保险定损系统。
+- 不要声称 SOTA。
+- 不要把长 polygon PDF 当作最终精修展示页。
