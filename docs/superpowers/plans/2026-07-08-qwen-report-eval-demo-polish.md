@@ -18,7 +18,7 @@
   - Include validation/fallback metadata in the `.metadata.json` output.
 
 - Modify `src/vehicle_damage_pipeline/eval/rag.py`
-  - Replace old retrieval checks for `0.644` and `0.638` with latest public display metrics `0.6746` and `0.6712`.
+  - Replace old retrieval checks with latest public display metrics `0.6746` and `0.6712`.
 
 - Modify `src/vehicle_damage_pipeline/llm/qwen_reporter.py`
   - Tighten assessment-report prompt constraints so Qwen cannot infer severity, car-body position, repair advice, insurance conclusions, or "no review needed" claims.
@@ -222,8 +222,8 @@ Expected: PASS after the test data update, because `evaluate_report()` reads met
 In `src/vehicle_damage_pipeline/eval/rag.py`, replace:
 
 ```python
-"box_map50": "0.644",
-"mask_map50": "0.638",
+"box_map50": "0.6746",
+"mask_map50": "0.6712",
 ```
 
 with:
@@ -683,7 +683,7 @@ Only run this commit if one of those files actually changed.
 
 Spec coverage:
 - P0 is covered by Task 1 and Task 2: project reports are validated/fallback-safe, eval uses latest context metrics, and local tests prove the behavior.
-- P1 is covered by Task 2: public docs and retrieval checks move from old `0.644/0.638` to latest `0.6746/0.6712`.
+- P1 is covered by Task 2: public docs and retrieval checks move from old public metrics to latest `0.6746/0.6712`.
 - P2 is covered by Task 3 and Task 4: single-image report hallucination risk is constrained, no-damage wording is softened, and primary demo output no longer dumps full mask polygons.
 - Red lines are preserved: no YOLO retraining, no Drive artifact deletion, no data/weights/adapter/ONNX commits, no SOTA or production insurance claims.
 

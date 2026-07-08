@@ -10,16 +10,12 @@ def test_evaluate_report_checks_grounded_metrics_and_required_sections():
     }
     report = """
 # 车辆损伤检测报告
-
 ## 项目概览
 本项目在测试集上取得 box mAP50 0.675 和 mask mAP50 0.671。
-
 ## 结果
 测试指标来自结构化 context。
-
 ## 局限性
-这不是生产级保险定损系统。
-"""
+这不是生产级保险定损系统。"""
 
     result = evaluate_report(context, report)
 

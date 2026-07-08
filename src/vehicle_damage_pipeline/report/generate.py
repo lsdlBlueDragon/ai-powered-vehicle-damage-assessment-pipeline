@@ -58,7 +58,7 @@ def generate_template_report(context: dict[str, Any], language: str = "Chinese")
         "视觉模型采用 YOLO11n-seg，输出检测框、类别、置信度和 mask。报告层默认使用 Qwen2.5-7B-Instruct 的 "
         "LoRA adapter 生成，也支持 `--no-qwen` 切换到确定性模板，便于低显存或离线演示。\n\n"
         "## 结果\n"
-        f"测试集 box mAP50 为 {box_map50:.3f}，box mAP50-95 为 {box_map:.3f}；"
+        f"测试集 box mAP50 为 {box_map50:.3f}，box mAP50-95 为 {box_map:.3f}，"
         f"mask mAP50 为 {mask_map50:.3f}，mask mAP50-95 为 {mask_map:.3f}。\n\n"
         "## RAG/LLM 评估\n"
         "报告评估关注检索覆盖、指标是否与 context JSON 一致、章节覆盖率，以及是否出现超出证据的夸大声明。\n\n"
@@ -95,6 +95,7 @@ def generate_report_from_context(
     qwen_generate_fn: Callable[..., str] | None = None,
 ) -> GeneratedReport:
     selected_backend = _normalize_backend(backend)
+
     def template_result(metadata: dict[str, Any]) -> GeneratedReport:
         text = generate_template_report(context, language=language)
         final_validation = evaluate_report(context, text)

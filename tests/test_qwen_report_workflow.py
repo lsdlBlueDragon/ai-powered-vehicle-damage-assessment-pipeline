@@ -73,8 +73,8 @@ def test_finetune_skips_existing_complete_adapter_without_training_imports():
 
 
 def test_project_report_defaults_to_qwen_adapter_and_can_use_template():
-    from vehicle_damage_pipeline.report.generate import generate_report_from_context
     from vehicle_damage_pipeline.eval.llm_eval import evaluate_report
+    from vehicle_damage_pipeline.report.generate import generate_report_from_context
 
     root = _fresh_case("report_backend")
     adapter = _make_complete_adapter(root)
@@ -85,7 +85,7 @@ def test_project_report_defaults_to_qwen_adapter_and_can_use_template():
         "## 结果\n"
         "测试集 box mAP50 0.675，mask mAP50 0.671。\n\n"
         "## 局限性\n"
-        "该项目不是生产级保险定损系统，也不声明 SOTA。"
+        "该项目不是生产级保险定损系统，也不声称 SOTA。"
     )
 
     qwen_result = generate_report_from_context(
@@ -111,16 +111,7 @@ def test_project_report_falls_back_when_qwen_output_fails_eval():
 
     root = _fresh_case("report_validation_fallback")
     adapter = _make_complete_adapter(root)
-    context = {
-        "project": {"name": "AI-Powered Vehicle Damage Assessment Pipeline"},
-        "dataset": {"name": "CarDD"},
-        "test_metrics": {
-            "metrics/mAP50(B)": 0.6745857662514867,
-            "metrics/mAP50-95(B)": 0.5111031193401403,
-            "metrics/mAP50(M)": 0.6711594915715345,
-            "metrics/mAP50-95(M)": 0.49173212749837997,
-        },
-    }
+    context = _context()
 
     result = generate_report_from_context(
         context,

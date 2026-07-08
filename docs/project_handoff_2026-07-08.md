@@ -197,7 +197,7 @@ C:\Users\90553\Downloads\demo2.pdf
 
 ### 5.2 最新 YOLO 指标
 
-当前更优指标来自最新 context，不应继续使用旧的 `0.644 / 0.638` 作为主要展示值。
+当前更优指标来自最新 context，不应继续使用早期较低指标作为主要展示值。
 
 ```text
 box precision:  0.6717414519451572
@@ -221,8 +221,8 @@ Mask mAP50: 0.6712
 旧指标：
 
 ```text
-Box mAP50:  0.644
-Mask mAP50: 0.638
+Box mAP50:  early lower value, replaced by the latest context metric
+Mask mAP50: early lower value, replaced by the latest context metric
 ```
 
 旧指标仍可能出现在 README、docs、tests、eval query 中，需要统一更新。
@@ -257,7 +257,7 @@ required section 局限性: false
 
 - 检索层基本可用。
 - 失败主要在报告生成层和 evaluation 规则不一致。
-- eval 仍检查旧指标 `0.644 / 0.638`，而 context 已经是新指标。
+- eval 仍检查早期旧指标，而 context 已经是新指标。
 - Qwen 输出没有强制插入准确指标和必需章节。
 
 下一步第一优先级就是让 `llm_eval_summary.json` 通过。
@@ -498,7 +498,7 @@ reports/llm_eval_summary.md
 
 任务：
 
-1. 搜索并替换旧 `0.644`、`0.638`。
+1. 搜索并替换早期旧指标。
 2. README 添加 latest results 表。
 3. `docs/model_card.md`、`docs/experiment_card.md`、`docs/results_summary.md` 同步。
 4. 明确写“不追求 SOTA、非生产定损”。
@@ -560,7 +560,7 @@ demo2.pdf: clean dent example without hallucinated severity/location
 
 当前优先级：
 1. 修复 Qwen 报告生成和 eval，使 reports/llm_eval_summary.json 通过。
-2. 把旧指标 0.644/0.638 统一更新为最新 context 指标：box mAP50 0.6746，mask mAP50 0.6712。
+2. 把早期旧指标统一更新为最新 context 指标：box mAP50 0.6746，mask mAP50 0.6712。
 3. 修复 Gradio/PDF demo：不要在主页面输出完整 mask polygon；单图 Qwen 报告不得编造损伤严重程度、车身部位、维修建议；必须包含免责声明。
 
 限制：

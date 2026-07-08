@@ -34,6 +34,25 @@ def _section_present(report: str, section: str) -> bool:
     return bool(pattern.search(report))
 
 
+def _is_negated_claim(prefix: str) -> bool:
+    negation_markers = [
+        "not ",
+        "does not",
+        "is not",
+        "not a",
+        "不是",
+        "不属于",
+        "不用于",
+        "不作为",
+        "不能",
+        "不要",
+        "不声称",
+        "并非",
+        "非",
+    ]
+    return any(marker in prefix for marker in negation_markers)
+
+
 def _forbidden_claims(report: str) -> list[str]:
     text = report.lower()
     found = []
@@ -42,8 +61,8 @@ def _forbidden_claims(report: str) -> list[str]:
         if needle not in text:
             continue
         index = text.find(needle)
-        prefix = text[max(0, index - 8) : index]
-        if "not " in prefix or "does not" in prefix or "不是" in prefix or "不" in prefix or "非" in prefix:
+        prefix = text[max(0, index - 12) : index]
+        if _is_negated_claim(prefix):
             continue
         found.append(claim)
     return found
@@ -57,9 +76,7 @@ def evaluate_report(
     sections = required_sections or DEFAULT_REQUIRED_SECTIONS
     box_map50 = _metric_value(context, "metrics/mAP50(B)")
     mask_map50 = _metric_value(context, "metrics/mAP50(M)")
-    section_results = {
-        section: _section_present(report, section) for section in sections
-    }
+    section_results = {section: _section_present(report, section) for section in sections}
     metric_mentions = {
         "box_map50": _metric_is_mentioned(report, box_map50),
         "mask_map50": _metric_is_mentioned(report, mask_map50),
@@ -76,9 +93,7 @@ def evaluate_report(
             "forbidden_claims": forbidden,
             "passes_forbidden_claim_check": not forbidden,
         },
-        "passed": all(metric_mentions.values())
-        and all(section_results.values())
-        and not forbidden,
+        "passed": all(metric_mentions.values()) and all(section_results.values()) and not forbidden,
     }
 
 

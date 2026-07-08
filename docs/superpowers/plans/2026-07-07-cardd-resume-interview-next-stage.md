@@ -39,10 +39,10 @@ Expected: all paths exist.
 打开 `docs/results_summary.md`，确认测试指标为：
 
 ```text
-Box mAP50: 0.644
-Box mAP50-95: 0.488
-Mask mAP50: 0.638
-Mask mAP50-95: 0.473
+Box mAP50: 0.6746
+Box mAP50-95: 0.5111
+Mask mAP50: 0.6712
+Mask mAP50-95: 0.4917
 ```
 
 Expected: 与 Drive JSON 一致。
@@ -173,7 +173,7 @@ Expected: 报告内容与真实 JSON、CSV、demo 输出一致。
 优先使用：
 
 ```text
-复现 CarDD 车辆损伤实例分割任务，基于 YOLO11n-seg 完成 COCO 到 YOLO segmentation 转换、Colab Drive 断点续训、测试评估、ONNX 导出和 demo 推理，测试集达到 box mAP50 0.644、mask mAP50 0.638。
+复现 CarDD 车辆损伤实例分割任务，基于 YOLO11n-seg 完成 COCO 到 YOLO segmentation 转换、Colab Drive 断点续训、测试评估、ONNX 导出和 demo 推理，测试集达到 box mAP50 0.6746、mask mAP50 0.6712。
 ```
 
 Expected: 简历中出现模型、任务、工程闭环和量化指标。
@@ -239,4 +239,3 @@ Expected: 可以和 YOLO11n-seg 公平对比。
 在 `docs/results_summary.md` 添加新模型结果表。
 
 Expected: 至少记录 box mAP50、box mAP50-95、mask mAP50、mask mAP50-95、训练时长、GPU。
-

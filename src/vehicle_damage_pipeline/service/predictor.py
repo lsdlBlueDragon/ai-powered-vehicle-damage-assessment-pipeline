@@ -113,13 +113,12 @@ def generate_template_assessment_report(prediction: dict[str, Any]) -> str:
             {
                 "zh": class_name,
                 "meaning": "图像中存在疑似异常损伤区域。",
-                "advice": "建议人工结合原图和更多角度图片复核。",
             },
         )
         lines.extend(
             [
                 "",
-                f"{index}. {guidance['zh']}（{class_name}，{_confidence_band(confidence)}，confidence={confidence:.3f}）",
+                f"{index}. {guidance['zh']}（{class_name}）：{_confidence_band(confidence)}，confidence={confidence:.3f}",
                 f"   - 文字说明：{guidance['meaning']}",
                 "   - 人工复核：建议人工复核，并结合原图、更多角度图片和局部高清图确认该候选。",
                 f"   - 结构化定位：bbox={bbox}",
