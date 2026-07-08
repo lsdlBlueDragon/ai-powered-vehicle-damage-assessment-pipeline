@@ -22,6 +22,8 @@ def test_07_final_portfolio_validation_notebook_exists_and_checks_required_flows
     assert "final_portfolio_validation_" in text
     assert "final_validation" in text
     assert "Stale sync or old GitHub commit" in text
+    assert "ensure_vehicle_damage_package" in text
+    assert "sys.path.insert(0, str(src_root))" in text
     assert "evaluate_assessment_report" in text
     assert "build_public_prediction_summary" in text
     assert "build_detection_table" in text
