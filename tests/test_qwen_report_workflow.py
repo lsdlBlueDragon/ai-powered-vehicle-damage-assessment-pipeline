@@ -74,6 +74,7 @@ def test_finetune_skips_existing_complete_adapter_without_training_imports():
 
 def test_project_report_defaults_to_qwen_adapter_and_can_use_template():
     from vehicle_damage_pipeline.report.generate import generate_report_from_context
+    from vehicle_damage_pipeline.eval.llm_eval import evaluate_report
 
     root = _fresh_case("report_backend")
     adapter = _make_complete_adapter(root)
@@ -94,12 +95,15 @@ def test_project_report_defaults_to_qwen_adapter_and_can_use_template():
     )
     assert qwen_result.metadata["backend"] == "qwen_adapter"
     assert qwen_result.metadata["qwen_validation"]["passed"] is True
+    assert qwen_result.metadata["final_validation"]["passed"] is True
     assert qwen_result.text.startswith("# Qwen report")
 
     template_result = generate_report_from_context(_context(), backend="template")
     assert template_result.metadata["backend"] == "template"
+    assert template_result.metadata["final_validation"]["passed"] is True
     assert "box mAP50" in template_result.text
     assert "0.675" in template_result.text
+    assert evaluate_report(_context(), template_result.text)["passed"] is True
 
 
 def test_project_report_falls_back_when_qwen_output_fails_eval():
@@ -128,10 +132,24 @@ def test_project_report_falls_back_when_qwen_output_fails_eval():
     assert result.metadata["requested_backend"] == "qwen"
     assert result.metadata["fallback_reason"] == "qwen_report_validation_failed"
     assert result.metadata["qwen_validation"]["passed"] is False
+    assert result.metadata["final_validation"]["passed"] is True
     assert "box mAP50 为 0.675" in result.text
     assert "mask mAP50 为 0.671" in result.text
-    assert "## 测试结果" in result.text
-    assert "## 局限性与下一步" in result.text
+    assert "## 结果" in result.text
+    assert "## 局限性" in result.text
+
+
+def test_project_report_fallback_template_avoids_forbidden_claims():
+    from vehicle_damage_pipeline.eval.llm_eval import evaluate_report
+    from vehicle_damage_pipeline.report.generate import generate_report_from_context
+
+    result = generate_report_from_context(_context(), backend="template")
+    validation = evaluate_report(_context(), result.text)
+
+    assert validation["passed"] is True
+    assert validation["quality"]["forbidden_claims"] == []
+    assert "SOTA" not in result.text
+    assert "生产级保险定损" not in result.text
 
 
 def test_assessment_report_can_use_qwen_backend_and_template_fallback():
@@ -153,7 +171,10 @@ def test_assessment_report_can_use_qwen_backend_and_template_fallback():
         prediction,
         backend="qwen",
         adapter_dir=adapter,
-        qwen_generate_fn=lambda **_: "Qwen 单图报告：检测到右前翼子板疑似凹陷，建议人工复核。",
+        qwen_generate_fn=lambda **_: (
+            "Qwen 单图报告：检测到 dent/凹陷，confidence=0.680，"
+            "bbox=[282.0, 244.1, 621.1, 529.7]。建议人工复核。"
+        ),
     )
     assert qwen_report.startswith("Qwen 单图报告")
 

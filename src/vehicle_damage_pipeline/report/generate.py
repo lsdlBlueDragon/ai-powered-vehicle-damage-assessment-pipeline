@@ -29,7 +29,7 @@ def generate_template_report(context: dict[str, Any], language: str = "Chinese")
     if language.lower().startswith("en"):
         return (
             "# AI-Powered Vehicle Damage Assessment Pipeline\n\n"
-            "## Project Overview\n"
+            "## Project Overview / 项目概览\n"
             "This project builds an engineering pipeline for vehicle damage detection, instance segmentation, "
             "structured prediction output, and grounded report generation.\n\n"
             "## Dataset And Task\n"
@@ -37,13 +37,14 @@ def generate_template_report(context: dict[str, Any], language: str = "Chinese")
             "## Method\n"
             "The detector is YOLO11n-seg. The report layer uses structured experiment context and can run either a "
             "Qwen2.5-7B LoRA adapter or this deterministic template fallback.\n\n"
-            "## Results\n"
+            "## Results / 结果\n"
             f"On the test split, box mAP50 is {box_map50:.3f}, box mAP50-95 is {box_map:.3f}, "
             f"mask mAP50 is {mask_map50:.3f}, and mask mAP50-95 is {mask_map:.3f}.\n\n"
             "## RAG/LLM Evaluation\n"
             "The report is checked for metric grounding, required section coverage, and forbidden exaggerated claims.\n\n"
-            "## Limitations And Next Steps\n"
-            "This is not a production-ready insurance assessment system and does not claim SOTA performance.\n"
+            "## Limitations And Next Steps / 局限性\n"
+            "This portfolio project is for reproducible engineering demonstration, not automated claim decisions. "
+            "Future work should add more real-image testing, stronger per-class analysis, and human review workflows.\n"
         )
     return (
         "# AI-Powered Vehicle Damage Assessment Pipeline\n\n"
@@ -56,14 +57,14 @@ def generate_template_report(context: dict[str, Any], language: str = "Chinese")
         "## 方法\n"
         "视觉模型采用 YOLO11n-seg，输出检测框、类别、置信度和 mask。报告层默认使用 Qwen2.5-7B-Instruct 的 "
         "LoRA adapter 生成，也支持 `--no-qwen` 切换到确定性模板，便于低显存或离线演示。\n\n"
-        "## 测试结果\n"
+        "## 结果\n"
         f"测试集 box mAP50 为 {box_map50:.3f}，box mAP50-95 为 {box_map:.3f}；"
         f"mask mAP50 为 {mask_map50:.3f}，mask mAP50-95 为 {mask_map:.3f}。\n\n"
         "## RAG/LLM 评估\n"
-        "报告评估关注检索覆盖、指标是否与 context JSON 一致、章节覆盖率，以及是否出现 SOTA 或生产级保险定损等夸大声明。\n\n"
-        "## 局限性与下一步\n"
-        "该项目不是生产级保险定损系统，也不声明 SOTA。后续优化重点包括更强的 per-class 评估、更多真实图片测试、"
-        "Qwen 单图报告质量评估，以及服务端显存管理。\n"
+        "报告评估关注检索覆盖、指标是否与 context JSON 一致、章节覆盖率，以及是否出现超出证据的夸大声明。\n\n"
+        "## 局限性\n"
+        "该项目面向作品集展示和工程复现，不用于自动化理赔或责任判断。后续优化重点包括更强的 per-class 评估、"
+        "更多真实图片测试、Qwen 单图报告质量评估，以及服务端显存管理。\n"
     )
 
 
@@ -94,10 +95,17 @@ def generate_report_from_context(
     qwen_generate_fn: Callable[..., str] | None = None,
 ) -> GeneratedReport:
     selected_backend = _normalize_backend(backend)
-    if selected_backend == "template":
+    def template_result(metadata: dict[str, Any]) -> GeneratedReport:
+        text = generate_template_report(context, language=language)
+        final_validation = evaluate_report(context, text)
         return GeneratedReport(
-            text=generate_template_report(context, language=language),
-            metadata={"backend": "template", "requested_backend": backend, "language": language},
+            text=text,
+            metadata={**metadata, "final_validation": final_validation},
+        )
+
+    if selected_backend == "template":
+        return template_result(
+            {"backend": "template", "requested_backend": backend, "language": language}
         )
 
     resolved_adapter = Path(adapter_dir) if adapter_dir else None
@@ -108,13 +116,13 @@ def generate_report_from_context(
     if not status["complete"]:
         if not fallback_to_template:
             raise FileNotFoundError(f"Qwen report adapter is incomplete: {status}")
-        return GeneratedReport(
-            text=generate_template_report(context, language=language),
-            metadata={
+        return template_result(
+            {
                 "backend": "template",
                 "requested_backend": "qwen",
                 "fallback_reason": "qwen_adapter_incomplete",
                 "adapter_status": status,
+                "adapter_complete": False,
                 "language": language,
             },
         )
@@ -133,9 +141,8 @@ def generate_report_from_context(
     if not validation["passed"]:
         if not fallback_to_template:
             raise ValueError(f"Qwen report failed validation: {validation}")
-        return GeneratedReport(
-            text=generate_template_report(context, language=language),
-            metadata={
+        return template_result(
+            {
                 "backend": "template",
                 "requested_backend": "qwen",
                 "fallback_reason": "qwen_report_validation_failed",
@@ -147,6 +154,7 @@ def generate_report_from_context(
                 "qwen_validation": validation,
             },
         )
+    final_validation = evaluate_report(context, text)
     return GeneratedReport(
         text=text,
         metadata={
@@ -157,6 +165,7 @@ def generate_report_from_context(
             "model_id": model_id,
             "language": language,
             "qwen_validation": validation,
+            "final_validation": final_validation,
         },
     )
 

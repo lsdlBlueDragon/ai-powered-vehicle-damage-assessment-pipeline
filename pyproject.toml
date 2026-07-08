@@ -13,5 +13,29 @@ dependencies = [
   "tqdm",
 ]
 
+[project.optional-dependencies]
+vision = [
+  "ultralytics>=8.3.0",
+  "opencv-python",
+  "matplotlib",
+]
+llm = [
+  "transformers>=4.51.0",
+  "datasets",
+  "accelerate",
+  "bitsandbytes",
+  "peft",
+  "trl",
+]
+service = [
+  "fastapi",
+  "uvicorn",
+  "gradio",
+  "python-multipart",
+]
+dev = [
+  "pytest",
+]
+
 [tool.setuptools.packages.find]
 where = ["src"]

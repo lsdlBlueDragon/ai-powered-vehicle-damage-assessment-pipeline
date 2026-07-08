@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import argparse
-import json
 from pathlib import Path
 
 from vehicle_damage_pipeline.llm.qwen_reporter import DEFAULT_QWEN_MODEL_ID
+from vehicle_damage_pipeline.service.display import (
+    build_debug_prediction_json,
+    build_detection_table,
+    build_public_prediction_summary,
+)
 from vehicle_damage_pipeline.service.predictor import DamagePredictor, generate_assessment_report
 
 
@@ -25,20 +29,28 @@ def launch(
 
     def run(image_path: str):
         prediction = predictor.predict_file(Path(image_path))
-        return json.dumps(prediction, indent=2, ensure_ascii=False), generate_assessment_report(
-            prediction,
-            backend=report_backend,
-            adapter_dir=adapter_dir,
-            model_id=model_id,
+        return (
+            build_public_prediction_summary(prediction),
+            build_detection_table(prediction),
+            generate_assessment_report(
+                prediction,
+                backend=report_backend,
+                adapter_dir=adapter_dir,
+                model_id=model_id,
+            ),
+            build_debug_prediction_json(prediction),
         )
 
     with gr.Blocks(title="Vehicle Damage Assessment") as demo:
         gr.Markdown("# AI-Powered Vehicle Damage Assessment Pipeline")
         image = gr.Image(type="filepath", label="Vehicle image")
         run_button = gr.Button("Run detection")
-        output_json = gr.Code(label="Prediction JSON", language="json")
+        output_summary = gr.JSON(label="Prediction summary")
+        detection_table = gr.Dataframe(label="Detections", interactive=False)
         report = gr.Textbox(label="Assessment report", lines=8)
-        run_button.click(run, inputs=image, outputs=[output_json, report])
+        with gr.Accordion("Debug prediction JSON", open=False):
+            debug_json = gr.Code(label="Full prediction JSON", language="json")
+        run_button.click(run, inputs=image, outputs=[output_summary, detection_table, report, debug_json])
     demo.launch()
 
 

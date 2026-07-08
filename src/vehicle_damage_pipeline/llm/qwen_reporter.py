@@ -30,8 +30,9 @@ def build_assessment_report_messages(prediction: dict[str, Any], language: str =
     language_instruction = "中文" if language.lower().startswith("ch") else "English"
     user = (
         f"请基于下面车辆损伤检测 JSON 生成一段 {language_instruction} 辅助评估报告。\n"
-        "要求：先给自然语言摘要，再列出每处损伤的类别、置信度、位置和人工复核建议；"
-        "不要声称生产级保险定损，不要编造图片中没有的损伤。\n\n"
+        "只允许使用 JSON 中的 image_name、class_name、confidence、bbox_xyxy 和检测数量。"
+        "可以给人工复核提示，但不要推断车身部位、车头车尾方向、损伤面积、严重程度、维修方案、费用、责任或理赔结论。"
+        "输出应包含自然语言摘要，并列出每处损伤的类别、置信度和 bbox。\n\n"
         f"Prediction JSON:\n{json.dumps(prediction, ensure_ascii=False, indent=2)}"
     )
     return [

@@ -1,18 +1,2 @@
-ultralytics>=8.3.0
+-e .[vision,llm,service,dev]
 gdown
-opencv-python
-matplotlib
-pandas
-pyyaml
-tqdm
-transformers>=4.51.0
-datasets
-accelerate
-bitsandbytes
-peft
-trl
-fastapi
-uvicorn
-gradio
-python-multipart
-pytest

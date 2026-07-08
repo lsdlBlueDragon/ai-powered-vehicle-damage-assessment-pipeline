@@ -43,35 +43,51 @@ class DamagePredictor:
 CLASS_REPORT_GUIDANCE = {
     "dent": {
         "zh": "凹陷",
-        "meaning": "车身钣金区域可能存在受力变形或局部内凹。",
-        "advice": "建议人工复核凹陷边界、漆面是否开裂，并评估钣金修复与补漆需求。",
+        "meaning": "模型检测到疑似凹陷类别候选。",
     },
     "scratch": {
         "zh": "划痕",
-        "meaning": "车漆表面可能存在线状或片状擦伤。",
-        "advice": "建议检查划痕深度，区分表层抛光可修复与需要补漆的情况。",
+        "meaning": "模型检测到疑似划痕类别候选。",
     },
     "crack": {
         "zh": "裂纹",
-        "meaning": "局部材料可能出现裂开、断裂或细长破损。",
-        "advice": "建议人工确认裂纹是否贯穿结构件，并结合近距离图片复核。",
+        "meaning": "模型检测到疑似裂纹类别候选。",
     },
     "glass shatter": {
         "zh": "玻璃破碎",
-        "meaning": "车窗或玻璃区域可能存在破碎、裂片或大面积损坏。",
-        "advice": "建议优先检查安全风险，并确认是否需要更换玻璃组件。",
+        "meaning": "模型检测到疑似玻璃破碎类别候选。",
     },
     "lamp broken": {
         "zh": "灯具破损",
-        "meaning": "车灯区域可能存在外壳破裂、缺失或灯组损坏。",
-        "advice": "建议检查灯具功能、密封性和外壳完整性。",
+        "meaning": "模型检测到疑似灯具破损类别候选。",
     },
     "tire flat": {
         "zh": "轮胎亏气",
-        "meaning": "轮胎形态可能显示明显亏气或变形。",
-        "advice": "建议检查胎压、胎壁损伤和是否存在扎钉漏气。",
+        "meaning": "模型检测到疑似轮胎亏气类别候选。",
     },
 }
+
+ASSESSMENT_FORBIDDEN_PHRASES = [
+    "车身左侧",
+    "车身右侧",
+    "左侧中部",
+    "右侧中部",
+    "车头",
+    "车尾",
+    "从车头延伸至车尾",
+    "面积较大",
+    "面积较小",
+    "严重",
+    "轻微",
+    "钣金",
+    "补漆",
+    "维修",
+    "更换",
+    "费用",
+    "理赔",
+    "责任",
+    "无需复核",
+]
 
 
 def _confidence_band(confidence: float) -> str:
@@ -85,7 +101,7 @@ def _confidence_band(confidence: float) -> str:
 def generate_template_assessment_report(prediction: dict[str, Any]) -> str:
     detections = prediction.get("detections", [])
     if not detections:
-        return "未检测到高于阈值的车辆损伤。建议结合人工复核、更多角度图片和更高分辨率局部图像继续判断。"
+        return "当前阈值下未检测到高于阈值的高置信度车辆损伤候选。建议人工复核，并结合更多角度图片和更高分辨率局部图像继续判断。"
 
     lines = [f"检测到 {len(detections)} 处疑似车辆损伤。以下结论由视觉模型自动生成，适合作为初步筛查参考："]
     for index, item in enumerate(detections, start=1):
@@ -105,13 +121,56 @@ def generate_template_assessment_report(prediction: dict[str, Any]) -> str:
                 "",
                 f"{index}. {guidance['zh']}（{class_name}，{_confidence_band(confidence)}，confidence={confidence:.3f}）",
                 f"   - 文字说明：{guidance['meaning']}",
-                f"   - 建议动作：{guidance['advice']}",
+                "   - 人工复核：建议人工复核，并结合原图、更多角度图片和局部高清图确认该候选。",
                 f"   - 结构化定位：bbox={bbox}",
             ]
         )
     lines.append("")
-    lines.append("该输出仅用于辅助评估，不构成生产级保险定损结论。")
+    lines.append("该输出仅用于辅助筛查和人工复核前参考。")
     return "\n".join(lines)
+
+
+def evaluate_assessment_report(prediction: dict[str, Any], report: str) -> dict[str, Any]:
+    text = report.lower()
+    forbidden = [phrase for phrase in ASSESSMENT_FORBIDDEN_PHRASES if phrase.lower() in text]
+    detections = prediction.get("detections", [])
+    class_results = []
+    confidence_results = []
+    bbox_results = []
+    if not detections:
+        has_review = "人工复核" in report
+        return {
+            "required_fields": {
+                "review_advice": has_review,
+                "classes": [],
+                "confidences": [],
+                "bboxes": [],
+            },
+            "forbidden_phrases": forbidden,
+            "passed": has_review and not forbidden,
+        }
+    for item in detections:
+        class_name = str(item.get("class_name", ""))
+        guidance = CLASS_REPORT_GUIDANCE.get(class_name, {"zh": class_name})
+        confidence = float(item.get("confidence", 0.0))
+        bbox = item.get("bbox_xyxy", [])
+        class_results.append(class_name in report or str(guidance["zh"]) in report)
+        confidence_results.append(f"{confidence:.3f}" in report or f"{confidence:.2f}" in report)
+        bbox_results.append(str(bbox) in report)
+    return {
+        "required_fields": {
+            "review_advice": "人工复核" in report,
+            "classes": class_results,
+            "confidences": confidence_results,
+            "bboxes": bbox_results,
+        },
+        "forbidden_phrases": forbidden,
+        "passed": all(class_results)
+        and all(confidence_results)
+        and all(bbox_results)
+        and "人工复核" in report
+        and not forbidden,
+    }
 
 
 def _normalize_report_backend(backend: str) -> str:
@@ -161,4 +220,8 @@ def generate_assessment_report(
         if fallback_to_template:
             return generate_template_assessment_report(prediction)
         raise
-    return text or generate_template_assessment_report(prediction)
+    if text and evaluate_assessment_report(prediction, text)["passed"]:
+        return text
+    if fallback_to_template:
+        return generate_template_assessment_report(prediction)
+    return text

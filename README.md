@@ -75,9 +75,12 @@ Run the notebooks in order:
 03_finetune_qwen7b_report_lora.ipynb
 04_generate_llm_report_qwen7b.ipynb
 06_colab_qwen_report_eval_full_workflow.ipynb
+07_colab_final_portfolio_validation.ipynb
 ```
 
 Use `06_colab_qwen_report_eval_full_workflow.ipynb` as the current Task 1+2 report/eval runbook. It syncs the latest lightweight GitHub code into Drive, reuses the existing Qwen LoRA adapter with `--skip-if-complete`, checks the latest public metrics, generates the validated report, runs the LLM/RAG eval, and backs up the evidence bundle.
+
+Use `07_colab_final_portfolio_validation.ipynb` after the portfolio polish changes. It verifies package tests, project report eval, single-image report safety, compact demo display helpers, and final lightweight evidence backup against existing Drive artifacts.
 
 The notebooks are now runbooks. They install this package and call the CLI:
 
@@ -92,6 +95,24 @@ The notebooks are now runbooks. They install this package and call the CLI:
 ```
 
 `report.generate` and the Gradio/API report layer use the Qwen LoRA adapter by default. Add `--no-qwen` for deterministic template reports on low-memory or offline runs. The LoRA training CLI is reconnect-safe: when a complete adapter is already present in Drive, it writes metadata and skips training unless `--force-retrain` is provided.
+
+## Reproducibility Levels
+
+| Level | Required access | What you can run |
+| --- | --- | --- |
+| Level 1 | No CarDD data, no weights, no Drive artifacts | Install the package, run unit tests, inspect code, and read docs/runbooks. |
+| Level 2 | Authorized CarDD dataset access | Convert annotations, train/evaluate YOLO11n-seg, export ONNX, and regenerate metrics. |
+| Level 3 | Private Drive artifacts from this project | Run demo inference, Qwen adapter reports, RAG/LLM eval, and evidence backup without retraining. |
+
+The public GitHub repository is intentionally Level 1 by default. Do not publish the private `CarDD_YOLO11` Drive root because it contains licensed data, weights, adapters, ONNX exports, runs, and backups. A public artifact folder must be curated separately and contain only lightweight demo screenshots/PDFs, report/eval summaries, docs, and notebooks.
+
+Install options:
+
+```bash
+pip install -e ".[dev]"
+pip install -e ".[vision,service,dev]"
+pip install -e ".[vision,llm,service,dev]"
+```
 
 ## Inference Service
 

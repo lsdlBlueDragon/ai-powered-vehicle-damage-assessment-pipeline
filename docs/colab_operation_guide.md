@@ -248,7 +248,35 @@ CarDD_YOLO11/reports/llm_eval_summary.md
 CarDD_YOLO11/backups/qwen_report_eval_task12_<timestamp>/
 ```
 
-## 7. Final GitHub Deliverables
+## 7. Notebook 07: Final Portfolio Validation
+
+Notebook:
+
+```text
+notebooks/07_colab_final_portfolio_validation.ipynb
+```
+
+Runtime:
+
+```text
+GPU recommended
+```
+
+Use this after pulling the final portfolio-polish commit. It does not retrain YOLO. It verifies that the latest package code, report validation/fallback, single-image report safety checks, compact demo display helpers, LLM/RAG eval, and lightweight evidence backup all work against the existing Drive artifacts.
+
+Expected outputs:
+
+```text
+CarDD_YOLO11/reports/qwen7b_report_context.json
+CarDD_YOLO11/reports/qwen7b_final_report.md
+CarDD_YOLO11/reports/qwen7b_final_report.metadata.json
+CarDD_YOLO11/reports/llm_eval_summary.json
+CarDD_YOLO11/reports/llm_eval_summary.md
+CarDD_YOLO11/reports/final_portfolio_demo_display_smoke.json
+CarDD_YOLO11/backups/final_portfolio_validation_<timestamp>/
+```
+
+## 8. Final GitHub Deliverables
 
 GitHub should contain:
 
@@ -273,7 +301,7 @@ private Drive links
 personal tokens or credentials
 ```
 
-## 7. Recommended Execution Order
+## 9. Recommended Execution Order
 
 For the complete project:
 
@@ -282,6 +310,8 @@ For the complete project:
 02_demo_cardd_yolo11_seg.ipynb
 03_finetune_qwen7b_report_lora.ipynb
 04_generate_llm_report_qwen7b.ipynb
+06_colab_qwen_report_eval_full_workflow.ipynb
+07_colab_final_portfolio_validation.ipynb
 ```
 
 For a quick visual-only reproduction:
