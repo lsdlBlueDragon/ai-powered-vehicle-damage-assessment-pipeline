@@ -17,6 +17,31 @@ Vehicle image
 
 This is not a SOTA claim and not a production insurance assessment system. It is a portfolio-oriented AI engineering pipeline focused on reproducibility, service boundaries, evaluation, and honest limitations.
 
+## Demo Preview
+
+The Colab public demo accepts an uploaded vehicle image, a direct online image URL, or prepared sample images. The main UI shows compact prediction summaries, detection tables, and a short assessment report; the full prediction JSON is kept in a collapsed debug panel and hidden when printing the demo page to PDF.
+
+Open-web crash photos can be outside the CarDD class/domain coverage. A no-detection result means the model did not find a high-confidence candidate for the supported classes, not that the vehicle is undamaged.
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src="docs/assets/demo/demo-upload-detection.jpg" alt="Uploaded vehicle demo with dent segmentation mask and confidence score" />
+    </td>
+    <td width="50%">
+      <img src="docs/assets/demo/demo-url-input.jpg" alt="URL image demo with compact prediction summary" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Uploaded image / prepared sample inference</sub></td>
+    <td align="center"><sub>Direct image URL workflow</sub></td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="docs/assets/demo/demo-assessment-report.jpg" alt="Eval-safe image assessment report generated from structured detections" width="760" />
+</p>
+
 ## Current Results
 
 Default completed experiment:

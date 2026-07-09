@@ -10,6 +10,7 @@ from urllib.request import Request, urlopen
 from vehicle_damage_pipeline.llm.adapter import REPORT_ADAPTER_NAME
 from vehicle_damage_pipeline.llm.qwen_reporter import DEFAULT_QWEN_MODEL_ID
 from vehicle_damage_pipeline.service.display import (
+    DETECTION_TABLE_HEADERS,
     build_debug_prediction_json,
     build_detection_table,
     build_public_prediction_summary,
@@ -168,7 +169,11 @@ def launch_colab_demo(
         image_url = gr.Textbox(label="Direct image URL", placeholder="https://example.com/damaged-car.jpg")
         run_button = gr.Button("Run detection")
         output_summary = gr.JSON(label="Prediction summary")
-        detection_table = gr.Dataframe(label="Detections", interactive=False)
+        detection_table = gr.Dataframe(
+            headers=DETECTION_TABLE_HEADERS,
+            label="Detections",
+            interactive=False,
+        )
         report = gr.Textbox(label="Assessment report", lines=8)
         with gr.Accordion("Debug prediction JSON", open=False, elem_classes=["debug-json-panel"]):
             debug_json = gr.Code(label="Full prediction JSON", language="json")

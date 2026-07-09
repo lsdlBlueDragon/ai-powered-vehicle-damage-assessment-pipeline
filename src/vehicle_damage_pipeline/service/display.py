@@ -3,22 +3,24 @@ from __future__ import annotations
 import json
 from typing import Any
 
+DETECTION_TABLE_HEADERS = ["class_name", "confidence", "bbox_xyxy", "mask_points"]
+
 
 def _mask_point_count(detection: dict[str, Any]) -> int:
     polygon = detection.get("mask_polygon")
     return len(polygon) if isinstance(polygon, list) else 0
 
 
-def build_detection_table(prediction: dict[str, Any]) -> list[dict[str, Any]]:
+def build_detection_table(prediction: dict[str, Any]) -> list[list[Any]]:
     rows = []
     for detection in prediction.get("detections", []):
         rows.append(
-            {
-                "class_name": str(detection.get("class_name", "unknown")),
-                "confidence": float(detection.get("confidence", 0.0)),
-                "bbox_xyxy": str(detection.get("bbox_xyxy", [])),
-                "mask_points": _mask_point_count(detection),
-            }
+            [
+                str(detection.get("class_name", "unknown")),
+                float(detection.get("confidence", 0.0)),
+                str(detection.get("bbox_xyxy", [])),
+                _mask_point_count(detection),
+            ]
         )
     return rows
 

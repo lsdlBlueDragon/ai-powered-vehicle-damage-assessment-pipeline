@@ -31,18 +31,13 @@ def test_public_prediction_summary_hides_full_mask_polygon():
 
 
 def test_detection_table_contains_compact_fields():
-    from vehicle_damage_pipeline.service.display import build_detection_table
+    from vehicle_damage_pipeline.service.display import DETECTION_TABLE_HEADERS, build_detection_table
 
     rows = build_detection_table(_prediction())
 
-    assert rows == [
-        {
-            "class_name": "dent",
-            "confidence": 0.68,
-            "bbox_xyxy": "[282.0, 244.1, 621.1, 529.7]",
-            "mask_points": 3,
-        }
-    ]
+    assert DETECTION_TABLE_HEADERS == ["class_name", "confidence", "bbox_xyxy", "mask_points"]
+    assert rows == [["dent", 0.68, "[282.0, 244.1, 621.1, 529.7]", 3]]
+    assert not any(isinstance(row, dict) for row in rows)
 
 
 def test_debug_prediction_json_keeps_full_polygon():
