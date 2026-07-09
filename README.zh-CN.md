@@ -1,8 +1,4 @@
-<p align="right">
-  <a href="README.md"><kbd>English</kbd></a>
-</p>
-
-# AI 驱动的车辆损伤评估流水线
+# AI 驱动的车辆损伤评估流水线 <sub><a href="README.md">English</a></sub>
 
 这是一个端到端 AI 工程项目，覆盖车辆损伤检测、实例分割、结构化推理输出、受约束报告生成，以及 RAG/LLM 评估。
 
