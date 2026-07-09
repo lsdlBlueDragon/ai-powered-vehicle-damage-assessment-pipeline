@@ -1,3 +1,7 @@
+<p align="right">
+  <a href="README.zh-CN.md"><kbd>简体中文</kbd></a>
+</p>
+
 # AI-Powered Vehicle Damage Assessment Pipeline
 
 End-to-end AI engineering project for vehicle damage detection, instance segmentation, structured inference output, grounded report generation, and RAG/LLM evaluation.
